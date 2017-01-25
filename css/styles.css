@@ -5,10 +5,30 @@
 .col-sm-4 {
   height: 200px;
   width: 200px;
-  border: 5px solid black;
 }
 
 img {
-  height: 199px;
-  width: 199px;
+  height: 90%;
+  width: 90%;
+  margin-left: 5%
+}
+ .middle-col, .middle-row, .middle-middle {
+   border-color: black;
+   border-style: solid;
+ }
+
+ .middle-col {
+   border-width: 0px 5px;
+ }
+
+ .middle-row {
+   border-width: 5px 0px;
+ }
+
+.middle-middle {
+  border-width: 5px 5px;
+}
+
+.symbol {
+  margin-top: 8%;
 }

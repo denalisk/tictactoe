@@ -14,12 +14,6 @@ function Player(playerName, game, symbol) {
   playerArray.push(this);
 }
 
-Game.prototype.assignSymbol = function(symbols) {
-  for (var index = 0; index < 2; index++) {
-    this.playerArray[index].symbol = symbols[index]
-  }
-}
-
 Game.prototype.stateSwitch = function() {
   if (this.playerState === 0) {
     this.playerState = 1;
@@ -90,20 +84,27 @@ Game.prototype.checkOver = function () {
   }
 };
 
+Game.prototype.imageInsert = function(imageId, targetId) {
+  $(targetId).append($(imageId).clone())
+}
+
 
 $(document).ready(function() {
   var player1 = new Player("Sam", "X");
   var player2 = new Player("Nicole", "O");
   var game1 = new Game(playerArray);
-  $("#board").append(game1.playerArray[0].symbol);
-
-
   game1.printBoard("#board");
 
   $(".position").click(function() {
-    var vectorIndex = parseInt($(this).attr('id'));
-    console.log(vectorIndex);
+    var currentDiv = $(this);
+    var vectorIndex = parseInt(currentDiv.attr('id'));
     if (game1.valueVector[vectorIndex] === 0) {
+      if (game1.playerState === 0) {
+        var imageId = "#x";
+      } else {
+        var imageId = "#o";
+      }
+      game1.imageInsert(imageId, currentDiv);
       game1.valueVector[vectorIndex] = game1.playerState+1;
       $("#board").empty();
       game1.printBoard("#board");
