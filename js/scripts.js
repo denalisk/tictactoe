@@ -1,6 +1,6 @@
-function Game(valueVector, gameState, playerArray) {
-  this.valueVector = valueVector;
-  this.gameState = gameState;
+function Game(playerArray) {
+  this.valueVector = [0,0,0,0,0,0,0,0,0];
+  this.gameState = true;
   this.playerState = 0;
   this.playerArray = playerArray;
   this.currentPlayer = playerArray[playerState]
@@ -18,6 +18,24 @@ Game.prototype.stateSwitch = function() {
   } else {
     playerState = 0;
   }
+}
+
+Game.prototype.printBoard = function(outputId) {
+  var topRow = [];
+  var midRow = [];
+  var bottomRow = [];
+  for (var i = 0; i < this.valueVector.length; i++) {
+    if (i < 3) {
+      topRow.push(this.valueVector[i]);
+    } else if (i < 6) {
+      midRow.push(this.valueVector[i]);
+    } else {
+      bottomRow.push(this.valueVector[i]);
+    }
+  }
+  $(outputId).append(topRow);
+  $(outputId).append(midRow);
+  $(outputId).append(bottomRow);
 }
 
 
