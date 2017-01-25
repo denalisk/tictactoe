@@ -42,6 +42,27 @@ Game.prototype.printBoard = function(outputLocation) {
   $(outputLocation).append(bottomRow);
 }
 
+Game.prototype.checkWin = function() {
+  var firstElement = this.valueVector[0];
+  var over = false;
+  for (var index = 0; index < 7; index += 3) {
+    if (this.valueVector[index] === this.valueVector[index + 1] && this.valueVector[index] === this.valueVector[index + 2] && this.valueVector[index] != 0) {
+      over = true;
+    }
+  }
+  for (var index = 0; index < 3; index += 1) {
+    if (this.valueVector[index] === this.valueVector[index + 3] && this.valueVector[index] === this.valueVector[index + 6] && this.valueVector[index] != 0) {
+      over = true;
+    }
+  }
+  for (var index = 2; index < 5; index += 2) {
+    if (this.valueVector[4] === this.valueVector[4 + index] && this.valueVector[index] === this.valueVector[4 - index] && this.valueVector[index] != 0) {
+      over = true;
+    }
+  }
+  return over;
+}
+
 
 $(document).ready(function() {
   var player1 = new Player("Sam", "X");
@@ -52,11 +73,16 @@ $(document).ready(function() {
 
   $(".move-button").click(function() {
     var vectorIndex = parseInt($(this).val());
-    console.log(vectorIndex);
-    game1.valueVector[vectorIndex] = game1.playerArray[game1.playerState].symbol;
-    $("#board").empty();
-    game1.printBoard("#board");
-    game1.stateSwitch();
+    if (game1.valueVector[vectorIndex] === 0) {
+      game1.valueVector[vectorIndex] = game1.playerArray[game1.playerState].symbol;
+      $("#board").empty();
+      game1.printBoard("#board");
+      if (game1.checkWin() === true){
+        $("#board").hide();
+        $("#game-over").show();
+      }
+      game1.stateSwitch();
+    }
   })
 
 })
