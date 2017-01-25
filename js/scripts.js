@@ -1,12 +1,14 @@
+var playerArray = []
+
 function Game(playerArray) {
   this.valueVector = [0,0,0,0,0,0,0,0,0];
   this.gameState = true;
   this.playerState = 0;
   this.playerArray = playerArray;
-  this.currentPlayer = playerArray[playerState]
+  this.currentPlayer = playerArray[this.playerState]
 }
 
-function Player(playerName, symbol) {
+function Player(playerName, symbol, game) {
   this.playerName = playerName;
   this.symbol = symbol;
   playerArray.push(this)
@@ -20,7 +22,7 @@ Game.prototype.stateSwitch = function() {
   }
 }
 
-Game.prototype.printBoard = function(outputId) {
+Game.prototype.printBoard = function(outputLocation) {
   var topRow = [];
   var midRow = [];
   var bottomRow = [];
@@ -33,12 +35,19 @@ Game.prototype.printBoard = function(outputId) {
       bottomRow.push(this.valueVector[i]);
     }
   }
-  $(outputId).append(topRow);
-  $(outputId).append(midRow);
-  $(outputId).append(bottomRow);
+  $(outputLocation).append(topRow);
+  $(outputLocation).append("<br>");
+  $(outputLocation).append(midRow);
+  $(outputLocation).append("<br>");
+  $(outputLocation).append(bottomRow);
 }
 
 
 $(document).ready(function() {
-  var gameboard
+  var player1 = new Player("Sam", "X");
+  var player2 = new Player("Nicole", "X");
+  var game1 = new Game(playerArray);
+
+  game1.printBoard("#board");
+
 })
