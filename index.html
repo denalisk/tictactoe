@@ -8,11 +8,39 @@
     <title>Tic Tac Toe</title>
   </head>
   <body>
-    <div class="container">
+    <div class="container-fluid">
+      <div class="landing-page">
+        <div class="landing-page-container">
+          <div class="holder">
+            <form id="get-names" action="index.html" method="post">
+              <h2>Who's Playing?</h2>
+              <div class="row form-group">
+                <label for="player-1">Player 1 Name</label>
+                <input id="player-1" class="form-control" type="text" name="name">
+              </div>
+              <div class="row form-group">
+                <label for="player-2">Player 2 Name</label>
+                <input id="player-2" class="form-control" type="text" name="name">
+              </div>
+              <button type="submit" name="button" class="btn btn-warning">Make Players</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div id="game-over" class="landing-page">
+        <div class="landing-page-container">
+          <div class="holder">
+            <p>Game Over!!</p>
+            <p><span id="game-over-text"></span></p>
+          </div>
+        </div>
+      </div>
+
       <div class="jumbotron">
         <h1>Tic Tac Toe</h1>
       </div>
-      <div class="entire-game col-md-8 col-md-offset-5">
+      <div class="entire-game col-md-8 col-md-offset-3">
         <div class="row">
           <div id="0" class="col-sm-4 position empty">
 
@@ -49,9 +77,7 @@
       <div id="board">
       </div>
 
-      <div id="game-over">
-        <p>Game Over!!</p>
-      </div>
+
       <div class="hidden">
         <div id="x" class="symbol">
           <img src="img/x.png" alt="x" />
@@ -60,23 +86,8 @@
           <img src="img/o.png" alt="o" />
         </div>
       </div>
-
-      <div class="landing-page">
-        <form id="get-names" action="index.html" method="post">
-          <h2>Who's Playing?</h2>
-          <div class="row form-group">
-            <label for="player-1">Player 1 Name</label>
-            <input id="player-1" class="form-control" type="text" name="name">
-          </div>
-          <div class="row form-group">
-            <label for="player-2">Player 2 Name</label>
-            <input id="player-2" class="form-control" type="text" name="name">
-          </div>
-          <button type="submit" name="button" class="btn btn-warning">Make Players</button>
-        </form>
-
-      </div>
-
     </div>
+
+
   </body>
 </html>

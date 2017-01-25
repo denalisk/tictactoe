@@ -1,13 +1,17 @@
 #game-over {
   display: none;
 }
-.entire-game {
+/*.entire-game {
   display: none;
-}
+}*/
 
 .col-sm-4 {
   height: 200px;
   width: 200px;
+}
+
+p {
+  font-size: 24px;
 }
 
 img {
@@ -36,7 +40,28 @@ img {
   margin-top: 8%;
 }
 
-.entire-game {
-  float: none;
-  margin: 0 auto;
+.landing-page {
+  position: fixed;
+  z-index: 1000;
+  background: rgba(183, 201, 232, .5);
+  width: 100%;
+  height: 100%;
+
+}
+
+.holder, .landing-page-container {
+
+  background: #bac9e2;
+}
+
+.landing-page-container {
+  margin-top: 300px;
+  margin-right: 40%;
+  margin-left: 40%;
+  padding: 15px;
+}
+
+.holder {
+  margin: 10%;
+
 }

@@ -114,7 +114,7 @@ $(document).ready(function() {
         game1.imageInsert(imageId, currentDiv);
         game1.valueVector[vectorIndex] = game1.playerState+1;
         if (game1.checkOver() === true){
-          $("#game-over").append(game1.winner);
+          $("#game-over-text").text(game1.winner);
           game1.gameState = false;
           $("#game-over").show();
         }
