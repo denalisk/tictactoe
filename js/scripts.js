@@ -1,4 +1,5 @@
-var playerArray = []
+var playerArray = [];
+var currentGame;
 
 function Game(playerArray) {
   this.valueVector = [0,0,0,0,0,0,0,0,0];
@@ -101,25 +102,33 @@ $(document).ready(function() {
     var player1 = new Player($("#player-1").val());
     var player2 = new Player($("#player-2").val());
     var game1 = new Game(playerArray);
+    currentGame = game1;
 
     $(".position").click(function() {
       var currentDiv = $(this);
       var vectorIndex = parseInt(currentDiv.attr('id'));
-      if (game1.valueVector[vectorIndex] === 0 && game1.gameState === true) {
-        if (game1.playerState === 0) {
+      if (currentGame.valueVector[vectorIndex] === 0 && currentGame.gameState === true) {
+        if (currentGame.playerState === 0) {
           var imageId = "#x";
         } else {
           var imageId = "#o";
         }
-        game1.imageInsert(imageId, currentDiv);
-        game1.valueVector[vectorIndex] = game1.playerState+1;
-        if (game1.checkOver() === true){
-          $("#game-over-text").text(game1.winner);
-          game1.gameState = false;
+        currentGame.imageInsert(imageId, currentDiv);
+        currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
+        if (currentGame.checkOver() === true){
+          $("#game-over-text").text(currentGame.winner);
+          currentGame.gameState = false;
           $("#game-over").show();
         }
-        game1.stateSwitch();
+        currentGame.stateSwitch();
       }
+    })
+
+    $(".replay").click(function(){
+      var newGame = new Game(playerArray);
+      currentGame = newGame;
+      $("#game-over").hide();
+      $(".entire-game").find(".position").empty();
     })
   })
 
