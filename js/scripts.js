@@ -1,5 +1,7 @@
 var playerArray = [];
 var currentGame;
+var player1Image = 1;
+var player2Image = 0;
 
 function Game(playerArray) {
   this.valueVector = [0,0,0,0,0,0,0,0,0];
@@ -97,8 +99,32 @@ Game.prototype.imageInsert = function(imageId, targetId) {
 
 
 $(document).ready(function() {
+  $(".player-1-image").click(function() {
+    $(this).siblings().removeClass("highlight");
+    $(this).addClass("highlight");
+    player1Image = $(this);
+  })
+  $(".player-2-image").click(function() {
+    $(this).siblings().removeClass("highlight");
+    $(this).addClass("highlight");
+    player2Image = $(this);
+  })
+
   $("#get-names").submit(function(event) {
     event.preventDefault();
+
+    $("#x").empty();
+    player1Image = player1Image.clone()
+    player1Image.removeClass("symbol-pic highlight");
+    player1Image.addClass("symbol");
+    $("#x").append(player1Image);
+
+    $("#o").empty();
+    player2Image = player2Image.clone()
+    player2Image.removeClass("symbol-pic highlight");
+    player2Image.addClass("symbol");
+    $("#o").append(player2Image);
+
     $(".entire-game").show();
     $(".landing-page").hide();
     var player1 = new Player($("#player-1").val());

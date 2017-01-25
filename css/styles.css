@@ -19,6 +19,11 @@ img {
   width: 90%;
   margin-left: 5%
 }
+
+.highlight {
+  border: 2px solid red;
+}
+
  .middle-col, .middle-row, .middle-middle {
    border-color: black;
    border-style: solid;
@@ -40,6 +45,11 @@ img {
   margin-top: 8%;
 }
 
+.symbol-pic {
+  height: 50px;
+  width: 50px;
+}
+
 .landing-page {
   position: fixed;
   z-index: 1000;
@@ -55,7 +65,7 @@ img {
 }
 
 .landing-page-container {
-  margin-top: 300px;
+  margin-top: 200px;
   margin-right: 40%;
   margin-left: 40%;
   padding: 15px;
