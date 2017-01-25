@@ -8,10 +8,16 @@ function Game(playerArray) {
   this.currentPlayer = playerArray[this.playerState]
 }
 
-function Player(playerName, symbol, game) {
+function Player(playerName, game, symbol) {
   this.playerName = playerName;
   this.symbol = symbol;
-  playerArray.push(this)
+  playerArray.push(this);
+}
+
+Game.prototype.assignSymbol = function(symbols) {
+  for (var index = 0; index < 2; index++) {
+    this.playerArray[index].symbol = symbols[index]
+  }
 }
 
 Game.prototype.stateSwitch = function() {
@@ -58,7 +64,6 @@ Game.prototype.checkWin = function() {
   }
   for (var index = 2; index < 5; index += 2) {
     if (this.valueVector[4] === this.valueVector[4 + index] && this.valueVector[4] === this.valueVector[4 - index] && this.valueVector[4] != 0) {
-      console.log("diagonal messed up");
       winner = true;
     }
   }
@@ -83,7 +88,6 @@ Game.prototype.checkOver = function () {
   } else {
     return this.checkComplete();
   }
-
 };
 
 
@@ -91,13 +95,16 @@ $(document).ready(function() {
   var player1 = new Player("Sam", "X");
   var player2 = new Player("Nicole", "O");
   var game1 = new Game(playerArray);
+  $("#board").append(game1.playerArray[0].symbol);
+
 
   game1.printBoard("#board");
 
-  $(".move-button").click(function() {
-    var vectorIndex = parseInt($(this).val());
+  $(".position").click(function() {
+    var vectorIndex = parseInt($(this).attr('id'));
+    console.log(vectorIndex);
     if (game1.valueVector[vectorIndex] === 0) {
-      game1.valueVector[vectorIndex] = game1.playerArray[game1.playerState].symbol;
+      game1.valueVector[vectorIndex] = game1.playerState+1;
       $("#board").empty();
       game1.printBoard("#board");
       if (game1.checkOver() === true){

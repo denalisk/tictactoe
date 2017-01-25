@@ -1,3 +1,14 @@
 #game-over {
   display: none;
 }
+
+.col-sm-4 {
+  height: 200px;
+  width: 200px;
+  border: 5px solid black;
+}
+
+img {
+  height: 199px;
+  width: 199px;
+}
