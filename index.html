@@ -9,39 +9,43 @@
   </head>
   <body>
     <div class="container">
-      <div class="row">
-        <div id="0" class="col-sm-4 position empty">
+      <div class="jumbotron">
+        <h1>Tic Tac Toe</h1>
+      </div>
+      <div class="entire-game col-md-8 col-md-offset-5">
+        <div class="row">
+          <div id="0" class="col-sm-4 position empty">
 
+          </div>
+          <div id="1" class="col-sm-4 position empty middle-col">
+
+          </div>
+          <div id="2" class="col-sm-4 position empty">
+
+          </div>
         </div>
-        <div id="1" class="col-sm-4 position empty middle-col">
+        <div class="row">
+          <div id="3" class="col-sm-4 position empty middle-row">
+          </div>
+          <div id="4" class="col-sm-4 position empty middle-middle">
 
+          </div>
+          <div id="5" class="col-sm-4 position empty middle-row">
+
+          </div>
         </div>
-        <div id="2" class="col-sm-4 position empty">
+        <div class="row">
+          <div id="6" class="col-sm-4 position empty">
 
+          </div>
+          <div id="7" class="col-sm-4 position empty middle-col">
+
+          </div>
+          <div id="8" class="col-sm-4 position empty">
+
+          </div>
         </div>
       </div>
-      <div class="row">
-        <div id="3" class="col-sm-4 position empty middle-row">
-        </div>
-        <div id="4" class="col-sm-4 position empty middle-middle">
-
-        </div>
-        <div id="5" class="col-sm-4 position empty middle-row">
-
-        </div>
-      </div>
-      <div class="row">
-        <div id="6" class="col-sm-4 position empty">
-
-        </div>
-        <div id="7" class="col-sm-4 position empty middle-col">
-
-        </div>
-        <div id="8" class="col-sm-4 position empty">
-
-        </div>
-      </div>
-
       <div id="board">
       </div>
 
@@ -56,6 +60,23 @@
           <img src="img/o.png" alt="o" />
         </div>
       </div>
+
+      <div class="landing-page">
+        <form id="get-names" action="index.html" method="post">
+          <h2>Who's Playing?</h2>
+          <div class="row form-group">
+            <label for="player-1">Player 1 Name</label>
+            <input id="player-1" class="form-control" type="text" name="name">
+          </div>
+          <div class="row form-group">
+            <label for="player-2">Player 2 Name</label>
+            <input id="player-2" class="form-control" type="text" name="name">
+          </div>
+          <button type="submit" name="button" class="btn btn-warning">Make Players</button>
+        </form>
+
+      </div>
+
     </div>
   </body>
 </html>

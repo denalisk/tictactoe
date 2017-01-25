@@ -6,11 +6,12 @@ function Game(playerArray) {
   this.playerState = 0;
   this.playerArray = playerArray;
   this.currentPlayer = playerArray[this.playerState]
+  this.winner = "It's a tie";
 }
 
-function Player(playerName, game, symbol) {
+function Player(playerName) {
   this.playerName = playerName;
-  this.symbol = symbol;
+  this.symbol = "X";
   playerArray.push(this);
 }
 
@@ -61,6 +62,9 @@ Game.prototype.checkWin = function() {
       winner = true;
     }
   }
+  if (winner === true) {
+    this.winner = this.playerArray[this.playerState].playerName + " " + "is the winner!";
+  }
   return winner;
 }
 
@@ -90,29 +94,33 @@ Game.prototype.imageInsert = function(imageId, targetId) {
 
 
 $(document).ready(function() {
-  var player1 = new Player("Sam", "X");
-  var player2 = new Player("Nicole", "O");
-  var game1 = new Game(playerArray);
-  game1.printBoard("#board");
+  $("#get-names").submit(function(event) {
+    event.preventDefault();
+    $(".entire-game").show();
+    $(".landing-page").hide();
+    var player1 = new Player($("#player-1").val());
+    var player2 = new Player($("#player-2").val());
+    var game1 = new Game(playerArray);
 
-  $(".position").click(function() {
-    var currentDiv = $(this);
-    var vectorIndex = parseInt(currentDiv.attr('id'));
-    if (game1.valueVector[vectorIndex] === 0) {
-      if (game1.playerState === 0) {
-        var imageId = "#x";
-      } else {
-        var imageId = "#o";
+    $(".position").click(function() {
+      var currentDiv = $(this);
+      var vectorIndex = parseInt(currentDiv.attr('id'));
+      if (game1.valueVector[vectorIndex] === 0 && game1.gameState === true) {
+        if (game1.playerState === 0) {
+          var imageId = "#x";
+        } else {
+          var imageId = "#o";
+        }
+        game1.imageInsert(imageId, currentDiv);
+        game1.valueVector[vectorIndex] = game1.playerState+1;
+        if (game1.checkOver() === true){
+          $("#game-over").append(game1.winner);
+          game1.gameState = false;
+          $("#game-over").show();
+        }
+        game1.stateSwitch();
       }
-      game1.imageInsert(imageId, currentDiv);
-      game1.valueVector[vectorIndex] = game1.playerState+1;
-      $("#board").empty();
-      game1.printBoard("#board");
-      if (game1.checkOver() === true){
-        $("#game-over").show();
-      }
-      game1.stateSwitch();
-    }
+    })
   })
 
 })

@@ -1,6 +1,9 @@
 #game-over {
   display: none;
 }
+.entire-game {
+  display: none;
+}
 
 .col-sm-4 {
   height: 200px;
@@ -31,4 +34,9 @@ img {
 
 .symbol {
   margin-top: 8%;
+}
+
+.entire-game {
+  float: none;
+  margin: 0 auto;
 }
