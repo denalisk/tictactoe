@@ -14,6 +14,7 @@ function Player(playerName) {
   this.playerName = playerName;
   this.symbol = "X";
   playerArray.push(this);
+  this.winsTotal = 0;
 }
 
 Game.prototype.stateSwitch = function() {
@@ -65,6 +66,7 @@ Game.prototype.checkWin = function() {
   }
   if (winner === true) {
     this.winner = this.playerArray[this.playerState].playerName + " " + "is the winner!";
+    this.playerArray[this.playerState].winsTotal += 1;
   }
   return winner;
 }
@@ -119,6 +121,10 @@ $(document).ready(function() {
           $("#game-over-text").text(currentGame.winner);
           currentGame.gameState = false;
           $("#game-over").show();
+          $("#player-1-name").text(currentGame.playerArray[0].playerName);
+          $("#player-1-wins").text(currentGame.playerArray[0].winsTotal);
+          $("#player-2-name").text(currentGame.playerArray[1].playerName);
+          $("#player-2-wins").text(currentGame.playerArray[1].winsTotal);
         }
         currentGame.stateSwitch();
       }
