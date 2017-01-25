@@ -44,24 +44,47 @@ Game.prototype.printBoard = function(outputLocation) {
 
 Game.prototype.checkWin = function() {
   var firstElement = this.valueVector[0];
-  var over = false;
+  var winner = false;
+  var completeGame = true;
   for (var index = 0; index < 7; index += 3) {
     if (this.valueVector[index] === this.valueVector[index + 1] && this.valueVector[index] === this.valueVector[index + 2] && this.valueVector[index] != 0) {
-      over = true;
+      winner = true;
     }
   }
   for (var index = 0; index < 3; index += 1) {
     if (this.valueVector[index] === this.valueVector[index + 3] && this.valueVector[index] === this.valueVector[index + 6] && this.valueVector[index] != 0) {
-      over = true;
+      winner = true;
     }
   }
   for (var index = 2; index < 5; index += 2) {
-    if (this.valueVector[4] === this.valueVector[4 + index] && this.valueVector[index] === this.valueVector[4 - index] && this.valueVector[index] != 0) {
-      over = true;
+    if (this.valueVector[4] === this.valueVector[4 + index] && this.valueVector[4] === this.valueVector[4 - index] && this.valueVector[4] != 0) {
+      console.log("diagonal messed up");
+      winner = true;
     }
   }
-  return over;
+  return winner;
 }
+
+Game.prototype.checkComplete = function () {
+  var completeGame = true;
+
+  for (var index = 0; index < 9; index++) {
+    if (this.valueVector[index] === 0) {
+      completeGame = false;
+      break;
+    }
+  }
+  return completeGame
+};
+
+Game.prototype.checkOver = function () {
+  if (this.checkWin() === true) {
+    return true;
+  } else {
+    return this.checkComplete();
+  }
+
+};
 
 
 $(document).ready(function() {
@@ -77,8 +100,7 @@ $(document).ready(function() {
       game1.valueVector[vectorIndex] = game1.playerArray[game1.playerState].symbol;
       $("#board").empty();
       game1.printBoard("#board");
-      if (game1.checkWin() === true){
-        $("#board").hide();
+      if (game1.checkOver() === true){
         $("#game-over").show();
       }
       game1.stateSwitch();
