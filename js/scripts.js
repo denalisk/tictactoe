@@ -11,6 +11,7 @@ function Game(player1, player2, onePlayer, computerPlayer) {
   this.playerArray.push(player1, player2, computerPlayer);
   this.currentPlayer = playerArray[this.playerState]
   this.winner = "It's a tie";
+  this.winnerId;
   this.onePlayer = onePlayer;
 }
 
@@ -92,9 +93,17 @@ Game.prototype.checkWin = function() {
   }
   if (winner === true) {
     this.winner = this.playerArray[winIndex-1].playerName + " " + "is the winner!";
-    this.playerArray[winIndex-1].winsTotal += 1;
+    this.winnerId = this.playerArray[winIndex-1].identifier;
   }
   return winner;
+}
+
+Game.prototype.cleanUp = function() {
+  for (var index = 0; index < this.playerArray.length; index++) {
+    if (this.winnerId === this.playerArray[index].identifier) {
+      this.playerArray[index].winsTotal += 1;
+    }
+  }
 }
 
 Game.prototype.checkComplete = function () {
@@ -111,10 +120,10 @@ Game.prototype.checkComplete = function () {
 
 Game.prototype.checkOver = function () {
   if (this.checkWin() === true) {
-    gamesArray.push(this.valueVector);
+    gamesArray.push([this.valueVector, this.winnerId]);
     return true;
   } else if (this.checkComplete() === true) {
-    gamesArray.push(this.valueVector);
+    gamesArray.push([this.valueVector, 1]);
     return true;
   } else {
     return this.checkComplete();
@@ -198,6 +207,7 @@ $(document).ready(function() {
           currentGame.stateSwitch();
         }
         if (currentGame.checkOver() === true){
+          currentGame.cleanUp();
           $("#game-over-text").text(currentGame.winner);
           currentGame.gameState = false;
           $("#game-over").show();
