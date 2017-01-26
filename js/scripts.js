@@ -1,6 +1,7 @@
 var playerArray = [];
 var currentGame;
 var onePlayer = false;
+var gamesArray = [];
 
 function Game(player1, player2, onePlayer, computerPlayer) {
   this.valueVector = [0,0,0,0,0,0,0,0,0];
@@ -25,6 +26,7 @@ Game.prototype.randomNumber = function() {
   var computerMove = Math.floor(Math.random()*9);
   while (this.valueVector[computerMove] != 0) {
     computerMove = Math.floor(Math.random()*9)
+    console.log(computerMove);
   }
   return computerMove;
 };
@@ -109,6 +111,10 @@ Game.prototype.checkComplete = function () {
 
 Game.prototype.checkOver = function () {
   if (this.checkWin() === true) {
+    gamesArray.push(this.valueVector);
+    return true;
+  } else if (this.checkComplete() === true) {
+    gamesArray.push(this.valueVector);
     return true;
   } else {
     return this.checkComplete();
@@ -177,9 +183,11 @@ $(document).ready(function() {
         if (currentGame.playerState === 0 && currentGame.onePlayer === true) {
           currentGame.imageInsert("#x", $(this));
           currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
-          var computerMove = currentGame.randomNumber();
-          currentGame.imageInsert("#o", "#" + computerMove);
-          currentGame.valueVector[computerMove] = 2;
+          if (currentGame.checkOver() === false) {
+            var computerMove = currentGame.randomNumber();
+            currentGame.imageInsert("#o", "#" + computerMove);
+            currentGame.valueVector[computerMove] = 2;
+          }
         } else if (currentGame.playerState === 0) {
           currentGame.imageInsert("#x", $(this));
           currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
@@ -203,6 +211,7 @@ $(document).ready(function() {
 
     $(".replay").click(function(){
       var newGame = new Game(player1, player2, onePlayer, computerPlayer);
+      console.log(gamesArray);
       newGame.onePlayerSetup();
       currentGame = newGame;
       $("#game-over").hide();
