@@ -98,7 +98,7 @@ Game.prototype.checkWin = function() {
     if (this.onePlayer === true && this.winnerId === 2) {
       this.computerPerfomance = 2;
     } else {
-      this.computerPerfomance = 0;
+      this.computerPerfomance = (-2);
     }
   }
   return winner;
@@ -155,6 +155,37 @@ Game.prototype.findSimilar = function(arrayOfArrays) {
   }
 }
 
+Game.prototype.evaluateMoves = function(similarArrays) {
+  var evaluator = [0,0,0,0,0,0,0,0,0];
+  for (var jdex = 0; jdex < this.valueVector.length; jdex++) {
+    if (this.valueVector[jdex] != 0) {
+      evaluator[jdex] += (-100);
+    }
+  }
+  for (var index = 0; index < similarArrays.length; index++) {
+    for (movesIndex = 0; movesIndex < this.valueVector.length; movesIndex++) {
+      if (similarArrays[index][0][movesIndex] === 2 && this.valueVector[movesIndex] === 0) {
+        evaluator[movesIndex] += similarArrays[index][1];
+      }
+    }
+  }
+  return evaluator;
+}
+
+Game.prototype.bestMove = function(evaluator) {
+  var bestPositionValue = 0;
+  var moveChoices = []
+  for (var index = 0; index < evaluator.length; index++) {
+    if (evaluator[index] > bestPositionValue) {
+      moveChoices = [];
+      moveChoices.push(index);
+    } else if (evaluator[index] === bestPositionValue) {
+      moveChoices.push(index);
+    }
+  }
+  var bestMove = Math.floor(Math.random() * moveChoices.length);
+  return moveChoices[bestMove];
+}
 
 $(document).ready(function() {
   var player1Image = $("#x");
@@ -216,7 +247,10 @@ $(document).ready(function() {
           currentGame.imageInsert("#x", $(this));
           currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
           if (currentGame.checkOver() === false) {
-            var computerMove = currentGame.randomNumber();
+            currentGame.findSimilar(gamesArray);
+            var eval = currentGame.evaluateMoves(similarArrays);
+            var computerMove = currentGame.bestMove(eval);
+            console.log(eval);
             currentGame.imageInsert("#o", "#" + computerMove);
             currentGame.valueVector[computerMove] = 2;
           }
@@ -240,8 +274,6 @@ $(document).ready(function() {
           $("#player-2-wins").text(currentGame.playerArray[1].winsTotal);
         }
       }
-      currentGame.findSimilar(gamesArray);
-      console.log("Found " + similarArrays.length + " similar games");
     })
 
     $(".replay").click(function(){
