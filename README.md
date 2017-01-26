@@ -65,3 +65,25 @@ Ice box ideas:
 * Make the computer play against one person
 * Improve the look of the game board
 * Add a sound effect or celebration effect when someone wins
+
+1 or 2 player functionality.
+
+Generate a computer player in array.
+
+Computer moves randomly as player 2.
+
+Computer stores finished games.
+
+Computer picks finished games that are similar.
+
+Computer picks similar games with lower loss percentage.
+
+Computer picks less similar games if loss is assured.
+
+Make the computer player 1, if desired by the human player.
+
+
+Ice box ideas:
+* generate 2 computer players
+
+* make them learn form each other

@@ -50,28 +50,30 @@ img {
   width: 50px;
 }
 
-.landing-page {
+#name-players {
+  display: none;
+}
+
+.landing-page, .players-landing-page {
   position: fixed;
   z-index: 1000;
   background: rgba(183, 201, 232, .5);
   width: 100%;
   height: 100%;
-
 }
 
-.holder, .landing-page-container {
-
+.holder, .landing-page-container, .players-landing-page-container, .players-holder {
   background: #bac9e2;
 }
 
-.landing-page-container {
+.landing-page-container, .players-landing-page-container {
   margin-top: 200px;
   margin-right: 40%;
   margin-left: 40%;
   padding: 15px;
 }
 
-.holder {
+.holder, .players-holder {
   margin: 10%;
 
 }

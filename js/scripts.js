@@ -1,7 +1,5 @@
 var playerArray = [];
 var currentGame;
-var player1Image = 1;
-var player2Image = 0;
 
 function Game(playerArray) {
   this.valueVector = [0,0,0,0,0,0,0,0,0];
@@ -17,6 +15,10 @@ function Player(playerName) {
   this.symbol = "X";
   playerArray.push(this);
   this.winsTotal = 0;
+}
+
+var makeComputerPlayer = function() {
+  console.log("A compute player was made");
 }
 
 Game.prototype.stateSwitch = function() {
@@ -99,6 +101,9 @@ Game.prototype.imageInsert = function(imageId, targetId) {
 
 
 $(document).ready(function() {
+  var player1Image = $("#x");
+  var player2Image = $("#robot");
+
   $(".player-1-image").click(function() {
     $(this).siblings().removeClass("highlight");
     $(this).addClass("highlight");
@@ -108,6 +113,16 @@ $(document).ready(function() {
     $(this).siblings().removeClass("highlight");
     $(this).addClass("highlight");
     player2Image = $(this);
+  })
+
+  $(".player-numbers").click(function() {
+    var playerChoice = $(this).attr('id');
+    $(".players-landing-page").hide();
+    $("#name-players").show();
+    if (playerChoice === "one-player") {
+      $(".player2-hidden").hide();
+      makeComputerPlayer();
+    }
   })
 
   $("#get-names").submit(function(event) {

@@ -9,7 +9,21 @@
   </head>
   <body>
     <div class="container-fluid">
-      <div class="landing-page">
+
+      <div class="players-landing-page">
+        <div class="players-landing-page-container">
+          <div class="players-holder">
+              <h2>Who's Playing?</h2>
+              <button type="button" name="button" class="btn btn-warning player-numbers" id="one-player">One Player</button>
+              <button type="button" name="button" class="btn btn-warning player-numbers" id="two-players">Two Players</button>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <div class="landing-page" id="name-players">
         <div class="landing-page-container">
           <div class="holder">
 
@@ -28,7 +42,7 @@
                 <label for="player-1">Player 1 Name</label>
                 <input id="player-1" class="form-control" type="text" name="name">
               </div>
-              <div class="row form-group">
+              <div class="row form-group player2-hidden">
                 <div class="image-chooser">
                   <img class="symbol-pic player-2-image cat" src="img/cat.png" alt="a cat"/>
                   <img class="symbol-pic player-2-image mariners" src="img/mariners.jpg" alt="the mariners logo"/>
@@ -106,6 +120,9 @@
         </div>
         <div id="o" class="symbol">
           <img src="img/o.png" alt="o" />
+        </div>
+        <div id="robot">
+          <img src="img/robot.png" alt="a robot" />
         </div>
       </div>
     </div>
