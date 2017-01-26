@@ -16,7 +16,6 @@ var findSimilar = function(arrayOfArrays, currentMoves) {
   }
 }
 
-Math.floor(Math.random() * moveChoices.length)
 
 var evaluateMoves = function(similarArrays, currentMoves) {
   var evaluator = [0,0,0,0,0,0,0,0,0];

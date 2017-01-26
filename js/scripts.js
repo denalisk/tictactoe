@@ -159,7 +159,7 @@ Game.prototype.evaluateMoves = function(similarArrays) {
   var evaluator = [0,0,0,0,0,0,0,0,0];
   for (var jdex = 0; jdex < this.valueVector.length; jdex++) {
     if (this.valueVector[jdex] != 0) {
-      evaluator[jdex] += (-100);
+      evaluator[jdex] = ('X');
     }
   }
   for (var index = 0; index < similarArrays.length; index++) {
@@ -173,14 +173,17 @@ Game.prototype.evaluateMoves = function(similarArrays) {
 }
 
 Game.prototype.bestMove = function(evaluator) {
-  var bestPositionValue = 0;
+  var bestPositionValue = (-10000);
   var moveChoices = []
   for (var index = 0; index < evaluator.length; index++) {
-    if (evaluator[index] > bestPositionValue) {
-      moveChoices = [];
-      moveChoices.push(index);
-    } else if (evaluator[index] === bestPositionValue) {
-      moveChoices.push(index);
+    if (typeof(evaluator[index]) === "number") {
+      if (evaluator[index] > bestPositionValue) {
+        moveChoices = [];
+        moveChoices.push(index);
+        bestPositionValue = evaluator[index];
+      } else if (evaluator[index] === bestPositionValue) {
+        moveChoices.push(index);
+      }
     }
   }
   var bestMove = Math.floor(Math.random() * moveChoices.length);
