@@ -2,6 +2,7 @@ var playerArray = [];
 var currentGame;
 var onePlayer = false;
 var gamesArray = [];
+var similarArrays = [];
 
 function Game(player1, player2, onePlayer, computerPlayer) {
   this.valueVector = [0,0,0,0,0,0,0,0,0];
@@ -12,6 +13,7 @@ function Game(player1, player2, onePlayer, computerPlayer) {
   this.currentPlayer = playerArray[this.playerState]
   this.winner = "It's a tie";
   this.winnerId;
+  this.computerPerfomance;
   this.onePlayer = onePlayer;
 }
 
@@ -26,8 +28,7 @@ function Player(playerName, identifier) {
 Game.prototype.randomNumber = function() {
   var computerMove = Math.floor(Math.random()*9);
   while (this.valueVector[computerMove] != 0) {
-    computerMove = Math.floor(Math.random()*9)
-    console.log(computerMove);
+    computerMove = Math.floor(Math.random()*9);
   }
   return computerMove;
 };
@@ -94,16 +95,13 @@ Game.prototype.checkWin = function() {
   if (winner === true) {
     this.winner = this.playerArray[winIndex-1].playerName + " " + "is the winner!";
     this.winnerId = this.playerArray[winIndex-1].identifier;
-  }
-  return winner;
-}
-
-Game.prototype.cleanUp = function() {
-  for (var index = 0; index < this.playerArray.length; index++) {
-    if (this.winnerId === this.playerArray[index].identifier) {
-      this.playerArray[index].winsTotal += 1;
+    if (this.onePlayer === true && this.winnerId === 2) {
+      this.computerPerfomance = 2;
+    } else {
+      this.computerPerfomance = 0;
     }
   }
+  return winner;
 }
 
 Game.prototype.checkComplete = function () {
@@ -120,18 +118,41 @@ Game.prototype.checkComplete = function () {
 
 Game.prototype.checkOver = function () {
   if (this.checkWin() === true) {
-    gamesArray.push([this.valueVector, this.winnerId]);
     return true;
   } else if (this.checkComplete() === true) {
-    gamesArray.push([this.valueVector, 1]);
-    return true;
+      this.computerPerfomance = 1;
+      return true;
   } else {
     return this.checkComplete();
   }
 };
 
+Game.prototype.cleanUp = function() {
+  for (var index = 0; index < this.playerArray.length; index++) {
+    if (this.winnerId === this.playerArray[index].identifier) {
+      this.playerArray[index].winsTotal += 1;
+    }
+  }
+  gamesArray.push([this.valueVector, this.computerPerfomance])
+  similarArrays = [];
+}
+
 Game.prototype.imageInsert = function(imageId, targetId) {
   $(targetId).append($(imageId).clone())
+}
+
+Game.prototype.findSimilar = function(arrayOfArrays) {
+  for (var arraysIterator = 0; arraysIterator < arrayOfArrays.length; arraysIterator++) {
+    var same = true;
+    for (var currentIndex = 0; currentIndex < this.valueVector.length; currentIndex++) {
+      if (this.valueVector[currentIndex] != 0 && arrayOfArrays[arraysIterator][0][currentIndex] != this.valueVector[currentIndex]) {
+        same = false;
+      }
+    }
+    if (same === true) {
+      similarArrays.push(arrayOfArrays[arraysIterator])
+    }
+  }
 }
 
 
@@ -177,15 +198,17 @@ $(document).ready(function() {
 
     $(".entire-game").show();
     $(".landing-page").hide();
-    var computerPlayer = new Player("Computer", 2);
-    computerPlayer.humanPlayer = false;
     var player1 = new Player($("#player-1").val(), 1);
     var player2 = new Player($("#player-2").val(), 2);
+    var computerPlayer = new Player("Computer", 2);
+    computerPlayer.humanPlayer = false;
     var game1 = new Game(player1, player2, onePlayer, computerPlayer);
     game1.onePlayerSetup();
     currentGame = game1;
 
     $(".position").click(function() {
+      similarArrays = [];
+
       var currentDiv = $(this);
       var vectorIndex = parseInt(currentDiv.attr('id'));
       if (currentGame.valueVector[vectorIndex] === 0 && currentGame.gameState === true) {
@@ -202,7 +225,7 @@ $(document).ready(function() {
           currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
           currentGame.stateSwitch();
         } else {
-          var imageId = "#o";
+          currentGame.imageInsert("#o", $(this));
           currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
           currentGame.stateSwitch();
         }
@@ -217,11 +240,12 @@ $(document).ready(function() {
           $("#player-2-wins").text(currentGame.playerArray[1].winsTotal);
         }
       }
+      currentGame.findSimilar(gamesArray);
+      console.log("Found " + similarArrays.length + " similar games");
     })
 
     $(".replay").click(function(){
       var newGame = new Game(player1, player2, onePlayer, computerPlayer);
-      console.log(gamesArray);
       newGame.onePlayerSetup();
       currentGame = newGame;
       $("#game-over").hide();
