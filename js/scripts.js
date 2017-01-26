@@ -8,6 +8,7 @@ function Game(playerArray) {
   this.playerArray = playerArray;
   this.currentPlayer = playerArray[this.playerState]
   this.winner = "It's a tie";
+  this.onePlayer = true;
 }
 
 function Player(playerName) {
@@ -15,10 +16,20 @@ function Player(playerName) {
   this.symbol = "X";
   playerArray.push(this);
   this.winsTotal = 0;
+  this.humanPlayer = true;
 }
 
 var makeComputerPlayer = function() {
-  console.log("A compute player was made");
+  var computer = new Player("Computer");
+  this.humanPlayer = false;
+}
+
+Game.prototype.onePlayerSetup = function() {
+  if (this.playerArray[0].humanPlayer === false) {
+    this.onePlayer = true;
+    this.playerArray.pop();
+    this.playerArray.reverse();
+  }
 }
 
 Game.prototype.stateSwitch = function() {
@@ -145,6 +156,7 @@ $(document).ready(function() {
     var player1 = new Player($("#player-1").val());
     var player2 = new Player($("#player-2").val());
     var game1 = new Game(playerArray);
+    game1.onePlayerSetup();
     currentGame = game1;
 
     $(".position").click(function() {
