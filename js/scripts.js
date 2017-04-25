@@ -113,7 +113,7 @@ Game.prototype.checkComplete = function () {
       break;
     }
   }
-  return completeGame
+  return completeGame;
 };
 
 Game.prototype.checkOver = function () {
