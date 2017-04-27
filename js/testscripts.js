@@ -198,6 +198,30 @@ Game.prototype.bestMove = function(evaluator) {
 }
 
 
+////////////////////////FRONT END///////////////////////////////////
+
+var
+
+$(document).ready(function() {
+
+
+
+
+// Icon selector click functions
+  $(".player-1-image").click(function() {
+    $(this).siblings().removeClass("highlight");
+    $(this).addClass("highlight");
+    player1Image = $(this);
+  })
+  $(".player-2-image").click(function() {
+    $(this).siblings().removeClass("highlight");
+    $(this).addClass("highlight");
+    player2Image = $(this);
+  })
+
+
+})
+
 
 
 

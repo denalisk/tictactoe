@@ -11,110 +11,100 @@
     <div class="container-fluid">
 
       <div class="players-landing-page">
+        <!-- The overlay that shows when the page is first loaded or refreshed -->
         <div class="players-landing-page-container">
           <div class="players-holder">
-              <h2>Who's Playing?</h2>
-              <button type="button" name="button" class="btn btn-warning player-numbers" id="one-player">One Player</button>
-              <button type="button" name="button" class="btn btn-warning player-numbers" id="two-players">Two Players</button>
-          </div>
-        </div>
-      </div>
-
-
-
-
-      <div class="landing-page" id="name-players">
-        <div class="landing-page-container">
-          <div class="holder">
-
-            <form id="get-names" action="index.html" method="post">
-              <h2>Who's Playing?</h2>
-              <h5>Choose a picture!</h5>
-              <div class="row form-group">
-                <div class="image-chooser">
-                  <img class="symbol-pic player-1-image cat" src="img/cat.png" alt="a cat"/>
-                  <img class="symbol-pic player-1-image mariners" src="img/mariners.jpg" alt="the mariners logo"/>
-                  <img class="symbol-pic player-1-image dog" src="img/dog.jpg" alt="a picture of a dog"/>
-                  <img class="symbol-pic player-1-image seahawk" src="img/seahawk.png" alt="seahawks logo"/>
-                  <img class="symbol-pic player-1-image oh" src="img/o.png" alt="o" />
-                  <img class="symbol-pic player-1-image ex" src="img/x.png" alt="x" />
-                </div>
+            <h2>Welcome to Tic-Tac-Toe!</h2>
+            <p>The classic game of three-in-a-row, take turns with your opponent placing your symbol on the board. The first to three in a row wins.</p>
+            <div id="first-splash" class="row">
+              <div id="player-1-choice" class="col-md-6">
+                <h3>Who's player one?</h3>
                 <label for="player-1">Player 1 Name</label>
                 <input id="player-1" class="form-control" type="text" name="name">
-              </div>
-              <div class="row form-group player2-hidden">
-                <div class="image-chooser">
-                  <img class="symbol-pic player-2-image cat" src="img/cat.png" alt="a cat"/>
-                  <img class="symbol-pic player-2-image mariners" src="img/mariners.jpg" alt="the mariners logo"/>
-                  <img class="symbol-pic player-2-image dog" src="img/dog.jpg" alt="a picture of a dog"/>
-                  <img class="symbol-pic player-2-image seahawk" src="img/seahawk.png" alt="seahawks logo"/>
-                  <img class="symbol-pic player-2-image oh" src="img/o.png" alt="o" />
-                  <img class="symbol-pic player-2-image ex" src="img/x.png" alt="x" />
+                <br>
+                <h4>Pick a symbol!</h4>
+                <div class="row form-group">
+                  <div class="image-chooser">
+                    <img class="symbol-pic player-1-image cat" src="img/cat.png" alt="a cat"/>
+                    <img class="symbol-pic player-1-image mariners" src="img/mariners.jpg" alt="the mariners logo"/>
+                    <img class="symbol-pic player-1-image dog" src="img/dog.jpg" alt="a picture of a dog"/>
+                    <img class="symbol-pic player-1-image seahawk" src="img/seahawk.png" alt="seahawks logo"/>
+                    <img class="symbol-pic player-1-image oh" src="img/o.png" alt="o" />
+                    <img class="symbol-pic player-1-image ex" src="img/x.png" alt="x" />
+                  </div>
                 </div>
-                <label for="player-2">Player 2 Name</label>
-                <input id="player-2" class="form-control" type="text" name="name">
               </div>
-              <button type="submit" name="button" class="btn btn-warning">Make Players</button>
-            </form>
+              <div id="player-2-choice" class="col-md-6">
+                <h3>Who's player two?</h3>
+                <button type="button" name="button" class="btn btn-warning player-numbers" id="one-player">A Computer!</button>
+                <button type="button" name="button" class="btn btn-warning player-numbers" id="two-players">A Human!</button>
+                <div class="row form-group" id="player2-hidden">
+                  <label for="player-2">Player 2 Name</label>
+                  <input id="player-2" class="form-control" type="text" name="name">
+                  <br>
+                  <div class="image-chooser">
+                    <img class="symbol-pic player-2-image cat" src="img/cat.png" alt="a cat"/>
+                    <img class="symbol-pic player-2-image mariners" src="img/mariners.jpg" alt="the mariners logo"/>
+                    <img class="symbol-pic player-2-image dog" src="img/dog.jpg" alt="a picture of a dog"/>
+                    <img class="symbol-pic player-2-image seahawk" src="img/seahawk.png" alt="seahawks logo"/>
+                    <img class="symbol-pic player-2-image oh" src="img/o.png" alt="o" />
+                    <img class="symbol-pic player-2-image ex" src="img/x.png" alt="x" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="start-game" class="btn btn-warning">Start Game</button>
           </div>
         </div>
       </div>
 
       <div id="game-over" class="landing-page">
+        <!-- Overlay for when the game is over -->
         <div class="landing-page-container">
           <div class="holder">
             <p>Game Over!!</p>
             <p><span id="game-over-text"></span></p>
             <p><span id="player-1-name"></span> wins: <span id="player-1-wins"></span></p>
             <p><span id="player-2-name"></span> wins: <span id="player-2-wins"></span></p>
-
             <button type="button" name="button" class="btn btn-warning replay">Play again!</button>
           </div>
         </div>
       </div>
 
       <div class="jumbotron">
+        <!-- The Gameboard -->
         <h1>Tic Tac Toe</h1>
       </div>
       <div class="entire-game col-md-8 col-md-offset-3">
         <div class="row">
           <div id="0" class="col-sm-4 position empty">
-
           </div>
           <div id="1" class="col-sm-4 position empty middle-col">
-
           </div>
           <div id="2" class="col-sm-4 position empty">
-
           </div>
         </div>
         <div class="row">
           <div id="3" class="col-sm-4 position empty middle-row">
           </div>
           <div id="4" class="col-sm-4 position empty middle-middle">
-
           </div>
           <div id="5" class="col-sm-4 position empty middle-row">
-
           </div>
         </div>
         <div class="row">
           <div id="6" class="col-sm-4 position empty">
-
           </div>
           <div id="7" class="col-sm-4 position empty middle-col">
-
           </div>
           <div id="8" class="col-sm-4 position empty">
-
           </div>
         </div>
-      </div>
-      <div id="board">
       </div>
 
 
       <div class="hidden">
+        <!-- hidden holder for the player images -->
         <div id="x" class="symbol">
           <img src="img/x.png" alt="x" />
         </div>

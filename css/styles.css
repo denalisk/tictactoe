@@ -1,15 +1,3 @@
-#game-over {
-  display: none;
-}
-/*.entire-game {
-  display: none;
-}*/
-
-.col-sm-4 {
-  height: 200px;
-  width: 200px;
-}
-
 p {
   font-size: 24px;
 }
@@ -20,22 +8,39 @@ img {
   margin-left: 5%
 }
 
+#game-over {
+  display: none;
+}
+
+#name-players {
+  display: none;
+}
+
+#player2-hidden {
+  display: none;
+}
+
+.col-sm-4 {
+  height: 200px;
+  width: 200px;
+}
+
 .highlight {
   border: 2px solid red;
 }
 
- .middle-col, .middle-row, .middle-middle {
-   border-color: black;
-   border-style: solid;
- }
+.middle-col, .middle-row, .middle-middle {
+  border-color: black;
+  border-style: solid;
+}
 
- .middle-col {
-   border-width: 0px 5px;
- }
+.middle-col {
+  border-width: 0px 5px;
+}
 
- .middle-row {
-   border-width: 5px 0px;
- }
+.middle-row {
+  border-width: 5px 0px;
+}
 
 .middle-middle {
   border-width: 5px 5px;
@@ -50,10 +55,24 @@ img {
   width: 50px;
 }
 
-#name-players {
-  display: none;
+div.players-landing-page {
+  position: fixed;
+  z-index: 10;
+  background: rgba(183, 201, 232, .5);
+  width: 100%;
+  height: 100%;
 }
 
+div.players-landing-page-container {
+  position: relative;
+  top: 15%;
+  left: 25%;
+  width: 50%;
+  background: #bac9e2;
+  padding: 15px;
+
+}
+/*
 .landing-page, .players-landing-page {
   position: fixed;
   z-index: 1000;
@@ -75,5 +94,4 @@ img {
 
 .holder, .players-holder {
   margin: 10%;
-
-}
+}*/
