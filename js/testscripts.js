@@ -162,22 +162,21 @@ Game.prototype.evaluateMoves = function() {
         var gameRecord = this.similarArrays[index];
         var modifier = (gameRecord.winnerId === this.currentPlayer.playerId || (gameRecord.winnerId === false)) ? 1 : -1;
         evaluator[movesIndex] += modifier*(2**(9-gameRecord.moves));
-        }
       }
     }
   }
   return evaluator;
 }
 
-// Notes on the new gamesArray:
-`gameObject = {
-  "valueVector": [9,9,9,9,9,9,9,9,9],
-  "moves": total_number_of_moves,
-  "winnerId": player1 = 1//player2 = 2,
-  "pointValue": f(performance = 1 if this player won // -1 if they lost, total_number_of_moves = m)
-  // pointValue = c*(2**(9-m))
-}
-`
+// // Notes on the new gamesArray:
+// gameObject = {
+//   "valueVector": [9,9,9,9,9,9,9,9,9],
+//   "moves": total_number_of_moves,
+//   "winnerId": player1 = 1//player2 = 2,
+//   "pointValue": f(performance = 1 if this player won // -1 if they lost, total_number_of_moves = m)
+//   // pointValue = c*(2**(9-m))
+// }
+
 
 Game.prototype.bestMove = function(evaluator) {
   var bestPositionValue = "none";
@@ -200,10 +199,26 @@ Game.prototype.bestMove = function(evaluator) {
 
 ////////////////////////FRONT END///////////////////////////////////
 
-var
-
 $(document).ready(function() {
+// Variables for the game
+  var players = 1;
+  var player1Image = $("#x");
+  var player2Image = $("#robot");
 
+// Player selector click functions
+  $("#one-player").click(function(){
+    players = 1;
+    player2Image = $("#robot");
+    $("#player2-human").hide();
+    $("#player2-computer").show();
+  })
+  $("#two-players").click(function(){
+    players = 2;
+    player2Image = $("#o");
+    $("#player2-computer").hide();
+    $("#player2-human").show();
+    console.log("Clicked!");
+  })
 
 
 

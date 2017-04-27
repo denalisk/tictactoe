@@ -16,6 +16,10 @@
           <div class="players-holder">
             <h2>Welcome to Tic-Tac-Toe!</h2>
             <p>The classic game of three-in-a-row, take turns with your opponent placing your symbol on the board. The first to three in a row wins.</p>
+            <div class="row center">
+              <button type="button" class="btn btn-warning player-numbers" id="one-player">One Player</button>
+              <button type="button" class="btn btn-warning player-numbers" id="two-players">Two Players</button>
+            </div>
             <div id="first-splash" class="row">
               <div id="player-1-choice" class="col-md-6">
                 <h3>Who's player one?</h3>
@@ -36,9 +40,13 @@
               </div>
               <div id="player-2-choice" class="col-md-6">
                 <h3>Who's player two?</h3>
-                <button type="button" name="button" class="btn btn-warning player-numbers" id="one-player">A Computer!</button>
-                <button type="button" name="button" class="btn btn-warning player-numbers" id="two-players">A Human!</button>
-                <div class="row form-group" id="player2-hidden">
+                <div class="row center" id="player2-computer">
+                  <h2>A computer!</h2>
+                  <div class="image-holder">
+                    <img src="img/robot.png" alt="A picture of a robot">
+                  </div>
+                </div>
+                <div class="row form-group" id="player2-human">
                   <label for="player-2">Player 2 Name</label>
                   <input id="player-2" class="form-control" type="text" name="name">
                   <br>

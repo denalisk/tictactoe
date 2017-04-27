@@ -16,8 +16,12 @@ img {
   display: none;
 }
 
-#player2-hidden {
+#player2-human {
   display: none;
+}
+
+.center {
+  text-align: center;
 }
 
 .col-sm-4 {
@@ -27,6 +31,16 @@ img {
 
 .highlight {
   border: 2px solid red;
+}
+
+div.image-holder {
+  width: 100%;
+  margin-top: 3%;
+}
+
+div.image-holder img {
+  width: 50%;
+  margin-left: 0%;
 }
 
 .middle-col, .middle-row, .middle-middle {
@@ -65,12 +79,12 @@ div.players-landing-page {
 
 div.players-landing-page-container {
   position: relative;
-  top: 15%;
-  left: 25%;
-  width: 50%;
+  z-index: 15;
+  top: 10vh;
+  left: 20%;
+  width: 55%;
   background: #bac9e2;
-  padding: 15px;
-
+  padding: 5%;
 }
 /*
 .landing-page, .players-landing-page {
