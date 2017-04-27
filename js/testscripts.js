@@ -1,14 +1,14 @@
-function GameMemory() {
+function GamesMemory() {
   // This holds the memory of all the games
   this.gamesArray = [];
 }
 
-function Game(gameMemory) {
+function Game(gamesMemory) {
   // This holds the individual game
-  this.gameMemory = computerKnowledge;
+  this.gamesMemory = gamesMemory;
   this.valueVector = [0,0,0,0,0,0,0,0,0];
   this.openPositions = [0,1,2,3,4,5,6,7,8];
-  this.similarArrays = this.gameMemory.gamesArray;
+  this.similarArrays = this.gamesMemory.gamesArray.slice();
   this.gameState = false;
   this.playerArray = [];
   this.currentPlayer;
@@ -95,15 +95,35 @@ Game.prototype.checkComplete = function () {
 
 Game.prototype.checkOver = function () {
   // Checks if the game is over with checkWin and checkComplete
+  // If the game is won, sets the winner to the current player
+  // If the game is tied, sets the winner to false (to use in ternary)
   if (this.checkWin() === true) {
-    return true;
+    this.winner = this.currentPlayer;
+    this.gameState = false;
   } else if (this.checkComplete() === true) {
-      this.computerPerfomance = 1;
-      return true;
-  } else {
-    return this.checkComplete();
+    this.winner = false;
+    this.gameState = false;
   }
 };
+
+Game.prototype.cleanUp = function () {
+  var newGameMemory = {
+    "valueVector": this.valueVector,
+    "moves": this.moves,
+    "winnerId": this.winner ? this.winner.playerId : false,
+    "gameCode": parseInt(this.valueVector.join(""))
+  };
+  var found = false;
+  for (let index = 0; index < this.gamesMemory.length; index++) {
+    if (this.gamesMemory[index].gameCode === newGameMemory.gameCode) {
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    this.gamesMemory.push(newGameMemory);
+  }
+}
 
 // AI FUNCTIONALITY /////////////////////////////////////////////////////////
 
@@ -114,17 +134,17 @@ Game.prototype.findSimilar = function() {
   for (var arraysIterator = 0; arraysIterator < this.similarArrays.length; arraysIterator++) {
     var same = true;
     for (var currentIndex = 0; currentIndex < this.valueVector.length; currentIndex++) {
-      if (this.valueVector[currentIndex] != 0 && gamesArray[arraysIterator][0][currentIndex] != this.valueVector[currentIndex]) {
+      if (this.valueVector[currentIndex] != 0 && gamesArray[arraysIterator].valueVector[currentIndex] != this.valueVector[currentIndex]) {
         same = false;
       }
     }
     if (same === false) {
-      this.gameMemory.similarArrays.splice(arraysIterator, 1);
+      this.similarArrays.splice(arraysIterator, 1);
     }
   }
 }
 
-Game.prototype.evaluateMoves = function(similarArrays) {
+Game.prototype.evaluateMoves = function() {
   // This function iterates through the similarArrays property of the Game and
   // ranks each legal move based off the outcome of each move in each game
   // Moves in winning games are highly positive, moves in losing games are worth
@@ -133,13 +153,16 @@ Game.prototype.evaluateMoves = function(similarArrays) {
   var evaluator = [0,0,0,0,0,0,0,0,0];
   for (var jdex = 0; jdex < this.valueVector.length; jdex++) {
     if (this.valueVector[jdex] != 0) {
-      evaluator[jdex] = ('X');
+      evaluator[jdex] = ('ILLEGAL');
     }
   }
-  for (var index = 0; index < similarArrays.length; index++) {
+  for (var index = 0; index < this.similarArrays.length; index++) {
     for (movesIndex = 0; movesIndex < this.valueVector.length; movesIndex++) {
-      if (similarArrays[index][0][movesIndex] === 2 && this.valueVector[movesIndex] === 0) {
-        evaluator[movesIndex] += similarArrays[index][1];
+      if (this.valueVector[movesIndex] === 0 && this.similarArrays[index].valueVector[movesIndex] === this.currentPlayer.playerId) {
+        var gameRecord = this.similarArrays[index];
+        var modifier = (gameRecord.winnerId === this.currentPlayer.playerId || (gameRecord.winnerId === false)) ? 1 : -1;
+        evaluator[movesIndex] += modifier*(2**(9-gameRecord.moves));
+        }
       }
     }
   }
@@ -150,11 +173,29 @@ Game.prototype.evaluateMoves = function(similarArrays) {
 `gameObject = {
   "valueVector": [9,9,9,9,9,9,9,9,9],
   "moves": total_number_of_moves,
-  "computerPerfomance": win/tie=1, loss=-1,
-  "pointValue": f(computerPerfomance = c, total_number_of_moves = m)
+  "winnerId": player1 = 1//player2 = 2,
+  "pointValue": f(performance = 1 if this player won // -1 if they lost, total_number_of_moves = m)
   // pointValue = c*(2**(9-m))
 }
 `
+
+Game.prototype.bestMove = function(evaluator) {
+  var bestPositionValue = "none";
+  var moveChoices = []
+  for (var index = 0; index < evaluator.length; index++) {
+    if (evaluator[index] !== "ILLEGAL") {
+      if (evaluator[index] > bestPositionValue || bestPositionValue === "none") {
+        moveChoices = [];
+        moveChoices.push(index);
+        bestPositionValue = evaluator[index];
+      } else if (evaluator[index] === bestPositionValue) {
+        moveChoices.push(index);
+      }
+    }
+  }
+  var bestMove = Math.floor(Math.random() * moveChoices.length);
+  return moveChoices[bestMove];
+}
 
 
 
