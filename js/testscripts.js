@@ -1,6 +1,14 @@
-function Game() {
+function GameMemory() {
+  // This holds the memory of all the games
+  this.gamesArray = [];
+}
+
+function Game(gameMemory) {
+  // This holds the individual game
+  this.gameMemory = computerKnowledge;
   this.valueVector = [0,0,0,0,0,0,0,0,0];
   this.openPositions = [0,1,2,3,4,5,6,7,8];
+  this.similarArrays = this.gameMemory.gamesArray;
   this.gameState = false;
   this.playerArray = [];
   this.currentPlayer;
@@ -96,3 +104,86 @@ Game.prototype.checkOver = function () {
     return this.checkComplete();
   }
 };
+
+// AI FUNCTIONALITY /////////////////////////////////////////////////////////
+
+Game.prototype.findSimilar = function() {
+  // The similarArrays property starts each game holding all arrays in memory.
+  // This function is called each turn by the AI and removes arrays that are not
+  // similar to the current gamestate, slowly whittling down the similar states
+  for (var arraysIterator = 0; arraysIterator < this.similarArrays.length; arraysIterator++) {
+    var same = true;
+    for (var currentIndex = 0; currentIndex < this.valueVector.length; currentIndex++) {
+      if (this.valueVector[currentIndex] != 0 && gamesArray[arraysIterator][0][currentIndex] != this.valueVector[currentIndex]) {
+        same = false;
+      }
+    }
+    if (same === false) {
+      this.gameMemory.similarArrays.splice(arraysIterator, 1);
+    }
+  }
+}
+
+Game.prototype.evaluateMoves = function(similarArrays) {
+  // This function iterates through the similarArrays property of the Game and
+  // ranks each legal move based off the outcome of each move in each game
+  // Moves in winning games are highly positive, moves in losing games are worth
+  // negative, and tie games are slightly positive
+  // Outputs an array of values associated with each move, i.e. [3, -12, 13,...]
+  var evaluator = [0,0,0,0,0,0,0,0,0];
+  for (var jdex = 0; jdex < this.valueVector.length; jdex++) {
+    if (this.valueVector[jdex] != 0) {
+      evaluator[jdex] = ('X');
+    }
+  }
+  for (var index = 0; index < similarArrays.length; index++) {
+    for (movesIndex = 0; movesIndex < this.valueVector.length; movesIndex++) {
+      if (similarArrays[index][0][movesIndex] === 2 && this.valueVector[movesIndex] === 0) {
+        evaluator[movesIndex] += similarArrays[index][1];
+      }
+    }
+  }
+  return evaluator;
+}
+
+// Notes on the new gamesArray:
+`gameObject = {
+  "valueVector": [9,9,9,9,9,9,9,9,9],
+  "moves": total_number_of_moves,
+  "computerPerfomance": win/tie=1, loss=-1,
+  "pointValue": f(computerPerfomance = c, total_number_of_moves = m)
+  // pointValue = c*(2**(9-m))
+}
+`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// GO TO FRONT END //////////////////////////////////////////////////////////////////
