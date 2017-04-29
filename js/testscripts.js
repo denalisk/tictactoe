@@ -17,11 +17,19 @@ function Game(gamesMemory) {
   this.computerPerfomance;
 }
 
-function Player(playerName, identifier, game) {
-  this.playerName = playerName;
-  this.identifier = identifier;
+function Player() {
+  this.playerName = "";
   this.winsTotal = 0;
   this.humanPlayer = true;
+  this.playerId = 0;
+  this.game = null;
+}
+
+Player.prototype.giveName = function(name) {
+  this.playerName = name;
+}
+
+Player.prototype.addToGame = function(game) {
   this.game = game;
   this.playerId = this.game.playerArray.length;
   this.game.playerArray.push(this);
@@ -218,6 +226,18 @@ $(document).ready(function() {
     $("#player2-computer").hide();
     $("#player2-human").show();
     console.log("Clicked!");
+  })
+
+// Start game click function
+  $("#start-game").click(function() {
+    var player1Name = $("#player-1").val();
+    var player2Name = $("#player-2").val();
+    if (player1Name === "" || player2Name === "") {
+      $("#invalid-player-name").show();
+    } else {
+      $(".players-landing-page").hide();
+      $("#gameboard-content").show();
+    }
   })
 
 

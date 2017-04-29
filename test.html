@@ -63,6 +63,9 @@
               </div>
             </div>
             <button type="button" id="start-game" class="btn btn-warning">Start Game</button>
+            <div id="invalid-player-name">
+              <p>Human players must have a name!</p>
+            </div>
           </div>
         </div>
       </div>
@@ -80,33 +83,35 @@
         </div>
       </div>
 
-      <div class="jumbotron">
-        <!-- The Gameboard -->
-        <h1>Tic Tac Toe</h1>
-      </div>
-      <div class="entire-game col-md-8 col-md-offset-3">
-        <div class="row">
-          <div id="0" class="col-sm-4 position empty">
-          </div>
-          <div id="1" class="col-sm-4 position empty middle-col">
-          </div>
-          <div id="2" class="col-sm-4 position empty">
-          </div>
+      <div id="gameboard-content">
+        <div class="jumbotron">
+          <!-- The Gameboard -->
+          <h1>Tic Tac Toe</h1>
         </div>
-        <div class="row">
-          <div id="3" class="col-sm-4 position empty middle-row">
+        <div class="entire-game col-md-8 col-md-offset-3">
+          <div class="row">
+            <div id="0" class="col-sm-4 position empty">
+            </div>
+            <div id="1" class="col-sm-4 position empty middle-col">
+            </div>
+            <div id="2" class="col-sm-4 position empty">
+            </div>
           </div>
-          <div id="4" class="col-sm-4 position empty middle-middle">
+          <div class="row">
+            <div id="3" class="col-sm-4 position empty middle-row">
+            </div>
+            <div id="4" class="col-sm-4 position empty middle-middle">
+            </div>
+            <div id="5" class="col-sm-4 position empty middle-row">
+            </div>
           </div>
-          <div id="5" class="col-sm-4 position empty middle-row">
-          </div>
-        </div>
-        <div class="row">
-          <div id="6" class="col-sm-4 position empty">
-          </div>
-          <div id="7" class="col-sm-4 position empty middle-col">
-          </div>
-          <div id="8" class="col-sm-4 position empty">
+          <div class="row">
+            <div id="6" class="col-sm-4 position empty">
+            </div>
+            <div id="7" class="col-sm-4 position empty middle-col">
+            </div>
+            <div id="8" class="col-sm-4 position empty">
+            </div>
           </div>
         </div>
       </div>

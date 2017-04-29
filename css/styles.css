@@ -8,6 +8,10 @@ img {
   margin-left: 5%
 }
 
+body {
+  background-color: rgb(145, 165, 232);
+}
+
 #game-over {
   display: none;
 }
@@ -17,6 +21,16 @@ img {
 }
 
 #player2-human {
+  display: none;
+}
+
+div#invalid-player-name {
+  display: none;
+  color: red;
+  padding-top: 5px;
+}
+
+div#gameboard-content {
   display: none;
 }
 
@@ -70,21 +84,19 @@ div.image-holder img {
 }
 
 div.players-landing-page {
-  position: fixed;
-  z-index: 10;
-  background: rgba(183, 201, 232, .5);
   width: 100%;
-  height: 100%;
+  height: 100vh;
 }
 
 div.players-landing-page-container {
+  top: 40px;
+  border-radius: 5%;
   position: relative;
-  z-index: 15;
-  top: 10vh;
   left: 20%;
   width: 55%;
   background: #bac9e2;
   padding: 5%;
+  margin-bottom: 50px;
 }
 /*
 .landing-page, .players-landing-page {
