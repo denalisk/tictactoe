@@ -35,9 +35,14 @@ Game.prototype.setup = function(playerArray) {
   // Add players to the game
   for (let index = 0; index < playerArray.length; index++) {
     playerArray[index].game = this;
-    playerArray[index].playerId = this.playerArray.length;
     this.playerArray.push(playerArray[index]);
+    playerArray[index].playerId = this.playerArray.length;
   }
+  this.currentPlayer = this.playerArray[0];
+}
+
+Game.prototype.nextPlayer = function() {
+  this.currentPlayer = (this.currentPlayer.playerId === 1) ? this.playerArray[1] : this.playerArray[0];
 }
 
 Game.prototype.randomNumber = function() {
@@ -120,6 +125,8 @@ Game.prototype.checkOver = function () {
 };
 
 Game.prototype.cleanUp = function() {
+  // Called when the game is over. Saves the
+  // current game as a gameMemory object in the global gamesMemory array
   var newGameMemory = {
     "valueVector": this.valueVector,
     "moves": this.moves,
@@ -134,7 +141,7 @@ Game.prototype.cleanUp = function() {
     }
   }
   if (!found) {
-    this.gamesMemory.push(newGameMemory);
+    this.gamesMemory.gamesArray.push(newGameMemory);
   }
 }
 
@@ -209,7 +216,7 @@ Player.prototype.bestMove = function(evaluator) {
   return moveChoices[bestMove];
 }
 
-Player.prototype.computerMove() {
+Player.prototype.computerMove = function() {
   //Return a move for the computer
   var evaluator = this.evaluateMoves();
   var moveChoice = this.bestMove(evaluator);
@@ -232,20 +239,22 @@ $(document).ready(function() {
 // Player selector click functions
   $("#one-player").click(function(){
     humanPlayers = 1;
+    player2.image = $("#robot");
     $("#player2-human").hide();
     $("#player2-computer").show();
   })
   $("#two-players").click(function(){
     humanPlayers = 2;
+    player2.image = $("#o");
     $("#player2-computer").hide();
     $("#player2-human").show();
   })
 
 // Start game click function
   $("#start-game").click(function() {
-    player1.name = $("#player-1").val();
-    player2.name = (humanPlayers === 2) ? $("#player-2").val() : "Computer";
-    if (player1.name === "" || player2.name === "") {
+    player1.playerName = $("#player-1").val();
+    player2.playerName = (humanPlayers === 2) ? $("#player-2").val() : "Computer";
+    if (player1.playerName === "" || player2.playerName === "") {
       $("#invalid-player-name").show();
     } else {
       // Assign player images
@@ -282,67 +291,49 @@ $(document).ready(function() {
 
   // Position click and play function
   $(".position").click(function() {
+    console.log(currentGame.valueVector);
     var currentDiv = $(this);
     var vectorIndex = parseInt(currentDiv.attr('id'));
     if (currentGame.valueVector[vectorIndex] === 0 && currentGame.gameState === true) {
+      console.log(currentGame.playerArray[0].playerName);
       // Insert the current player's symbol into the gameboard position
       var playerSymbolString = "#player" + currentGame.currentPlayer.playerId + "-symbol";
       $(currentDiv).append($(playerSymbolString).clone());
       // Mark the vector position as occupied in the valueVector
       currentGame.valueVector[vectorIndex] = currentGame.currentPlayer.playerId;
       // Check to see if the game is over
-      if (currentGame.checkOver()) {
-        currentGame.cleanUp();
-      } else if (humanPlayers === 1) {
+      currentGame.gameState = !(currentGame.checkOver());
+      if (currentGame.gameState && humanPlayers === 1) {
+        console.log("Computer turn");
         // Computer move
+        currentGame.nextPlayer();
         // Remove bloat from similarArrays
         currentGame.findSimilar();
-        // choose a computer move
-        currentGame.currentPlayer.computerMove
+        // choose a computer move and place it on the board
+        var computerChoice = currentGame.currentPlayer.computerMove();
+        var computerSymbolString = "#player" + currentGame.currentPlayer.playerId + "-symbol";
+        $("#" + currentGame.currentPlayer.playerId).append($(computerSymbolString).clone());
+        currentGame.valueVector[computerChoice] = currentGame.currentPlayer.playerId;
         // Check again to see if the game is over
         if (currentGame.checkOver()) {
-          currentGame.cleanUp();
+          currentGame.gameState = false;
         }
       }
-
-    }
-
-
-
-
-      if (currentGame.playerState === 0 && currentGame.onePlayer === true) {
-        currentGame.imageInsert("#x", $(this));
-        currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
-        if (currentGame.checkOver() === false) {
-          currentGame.findSimilar(gamesArray);
-          var eval = currentGame.evaluateMoves(similarArrays);
-          var computerMove = currentGame.bestMove(eval);
-          console.log(eval);
-          currentGame.imageInsert("#o", "#" + computerMove);
-          currentGame.valueVector[computerMove] = 2;
-        }
-      } else if (currentGame.playerState === 0) {
-        currentGame.imageInsert("#x", $(this));
-        currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
-        currentGame.stateSwitch();
-      } else {
-        currentGame.imageInsert("#o", $(this));
-        currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
-        currentGame.stateSwitch();
-      }
-      if (currentGame.checkOver() === true){
+      if (currentGame.gameState === false) {
+        // Clean up, show the game over screen
         currentGame.cleanUp();
         $("#game-over-text").text(currentGame.winner);
-        currentGame.gameState = false;
         $("#game-over").show();
-        $("#player-1-name").text(currentGame.playerArray[0].playerName);
-        $("#player-1-wins").text(currentGame.playerArray[0].winsTotal);
-        $("#player-2-name").text(currentGame.playerArray[1].playerName);
-        $("#player-2-wins").text(currentGame.playerArray[1].winsTotal);
+        $("#player-1-name").text(player1.playerName);
+        $("#player-1-wins").text(player1.winsTotal);
+        $("#player-2-name").text(player2.playerName);
+        $("#player-2-wins").text(player2.winsTotal);
+      } else {
+        // next players turn
+        currentGame.nextPlayer();
       }
     }
   })
-
 })
 
 
