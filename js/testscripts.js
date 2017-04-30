@@ -23,16 +23,21 @@ function Player() {
   this.humanPlayer = true;
   this.playerId = 0;
   this.game = null;
+  this.image = null;
 }
 
 Player.prototype.giveName = function(name) {
+  // Sets the name of a player
   this.playerName = name;
 }
 
-Player.prototype.addToGame = function(game) {
-  this.game = game;
-  this.playerId = this.game.playerArray.length;
-  this.game.playerArray.push(this);
+Game.prototype.setup = function(playerArray) {
+  // Add players to the game
+  for (let index = 0; index < playerArray.length; index++) {
+    playerArray[index].game = this;
+    playerArray[index].playerId = this.playerArray.length;
+    this.playerArray.push(playerArray[index]);
+  }
 }
 
 Game.prototype.randomNumber = function() {
@@ -114,7 +119,7 @@ Game.prototype.checkOver = function () {
   }
 };
 
-Game.prototype.cleanUp = function () {
+Game.prototype.cleanUp = function() {
   var newGameMemory = {
     "valueVector": this.valueVector,
     "moves": this.moves,
@@ -152,23 +157,24 @@ Game.prototype.findSimilar = function() {
   }
 }
 
-Game.prototype.evaluateMoves = function() {
-  // This function iterates through the similarArrays property of the Game and
-  // ranks each legal move based off the outcome of each move in each game
+Player.prototype.evaluateMoves = function() {
+  // This function iterates through the similarArrays property of the players Game
+  // and ranks each legal move based off the outcome of each similar game
   // Moves in winning games are highly positive, moves in losing games are worth
   // negative, and tie games are slightly positive
+  // Value of moves are weighted based off how long it took to win or lose a game
   // Outputs an array of values associated with each move, i.e. [3, -12, 13,...]
   var evaluator = [0,0,0,0,0,0,0,0,0];
-  for (var jdex = 0; jdex < this.valueVector.length; jdex++) {
-    if (this.valueVector[jdex] != 0) {
+  for (var jdex = 0; jdex < this.game.valueVector.length; jdex++) {
+    if (this.game.valueVector[jdex] != 0) {
       evaluator[jdex] = ('ILLEGAL');
     }
   }
-  for (var index = 0; index < this.similarArrays.length; index++) {
-    for (movesIndex = 0; movesIndex < this.valueVector.length; movesIndex++) {
-      if (this.valueVector[movesIndex] === 0 && this.similarArrays[index].valueVector[movesIndex] === this.currentPlayer.playerId) {
-        var gameRecord = this.similarArrays[index];
-        var modifier = (gameRecord.winnerId === this.currentPlayer.playerId || (gameRecord.winnerId === false)) ? 1 : -1;
+  for (var index = 0; index < this.game.similarArrays.length; index++) {
+    for (movesIndex = 0; movesIndex < this.game.valueVector.length; movesIndex++) {
+      if (this.game.valueVector[movesIndex] === 0 && this.game.similarArrays[index].valueVector[movesIndex] === this.game.currentPlayer.playerId) {
+        var gameRecord = this.game.similarArrays[index];
+        var modifier = (gameRecord.winnerId === this.game.currentPlayer.playerId || (gameRecord.winnerId === false)) ? 1 : -1;
         evaluator[movesIndex] += modifier*(2**(9-gameRecord.moves));
       }
     }
@@ -185,8 +191,7 @@ Game.prototype.evaluateMoves = function() {
 //   // pointValue = c*(2**(9-m))
 // }
 
-
-Game.prototype.bestMove = function(evaluator) {
+Player.prototype.bestMove = function(evaluator) {
   var bestPositionValue = "none";
   var moveChoices = []
   for (var index = 0; index < evaluator.length; index++) {
@@ -204,37 +209,58 @@ Game.prototype.bestMove = function(evaluator) {
   return moveChoices[bestMove];
 }
 
+Player.prototype.computerMove() {
+  //Return a move for the computer
+  var evaluator = this.evaluateMoves();
+  var moveChoice = this.bestMove(evaluator);
+  return moveChoice;
+}
+
 
 ////////////////////////FRONT END///////////////////////////////////
 
 $(document).ready(function() {
 // Variables for the game
-  var players = 1;
-  var player1Image = $("#x");
-  var player2Image = $("#robot");
+  var gamesMemory = new GamesMemory();
+  var currentGame;
+  var humanPlayers = 1;
+  var player1 = new Player();
+  var player2 = new Player();
+  player1.image = $("#x");
+  player2.image = $("#robot");
 
 // Player selector click functions
   $("#one-player").click(function(){
-    players = 1;
-    player2Image = $("#robot");
+    humanPlayers = 1;
     $("#player2-human").hide();
     $("#player2-computer").show();
   })
   $("#two-players").click(function(){
-    players = 2;
-    player2Image = $("#o");
+    humanPlayers = 2;
     $("#player2-computer").hide();
     $("#player2-human").show();
-    console.log("Clicked!");
   })
 
 // Start game click function
   $("#start-game").click(function() {
-    var player1Name = $("#player-1").val();
-    var player2Name = $("#player-2").val();
-    if (player1Name === "" || player2Name === "") {
+    player1.name = $("#player-1").val();
+    player2.name = (humanPlayers === 2) ? $("#player-2").val() : "Computer";
+    if (player1.name === "" || player2.name === "") {
       $("#invalid-player-name").show();
     } else {
+      // Assign player images
+      player1.image = player1.image.clone()
+      player1.image.removeClass("symbol-pic highlight");
+      player1.image.addClass("symbol");
+      $("#player1-symbol").append(player1.image);
+      player2.image = player2.image.clone()
+      player2.image.removeClass("symbol-pic highlight");
+      player2.image.addClass("symbol");
+      $("#player2-symbol").append(player2.image);
+      // Start the game
+      currentGame = new Game(gamesMemory);
+      currentGame.gameState = true;
+      currentGame.setup([player1, player2]);
       $(".players-landing-page").hide();
       $("#gameboard-content").show();
     }
@@ -246,14 +272,76 @@ $(document).ready(function() {
   $(".player-1-image").click(function() {
     $(this).siblings().removeClass("highlight");
     $(this).addClass("highlight");
-    player1Image = $(this);
+    player1.image = $(this);
   })
   $(".player-2-image").click(function() {
     $(this).siblings().removeClass("highlight");
     $(this).addClass("highlight");
-    player2Image = $(this);
+    player2.image = $(this);
   })
 
+  // Position click and play function
+  $(".position").click(function() {
+    var currentDiv = $(this);
+    var vectorIndex = parseInt(currentDiv.attr('id'));
+    if (currentGame.valueVector[vectorIndex] === 0 && currentGame.gameState === true) {
+      // Insert the current player's symbol into the gameboard position
+      var playerSymbolString = "#player" + currentGame.currentPlayer.playerId + "-symbol";
+      $(currentDiv).append($(playerSymbolString).clone());
+      // Mark the vector position as occupied in the valueVector
+      currentGame.valueVector[vectorIndex] = currentGame.currentPlayer.playerId;
+      // Check to see if the game is over
+      if (currentGame.checkOver()) {
+        currentGame.cleanUp();
+      } else if (humanPlayers === 1) {
+        // Computer move
+        // Remove bloat from similarArrays
+        currentGame.findSimilar();
+        // choose a computer move
+        currentGame.currentPlayer.computerMove
+        // Check again to see if the game is over
+        if (currentGame.checkOver()) {
+          currentGame.cleanUp();
+        }
+      }
+
+    }
+
+
+
+
+      if (currentGame.playerState === 0 && currentGame.onePlayer === true) {
+        currentGame.imageInsert("#x", $(this));
+        currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
+        if (currentGame.checkOver() === false) {
+          currentGame.findSimilar(gamesArray);
+          var eval = currentGame.evaluateMoves(similarArrays);
+          var computerMove = currentGame.bestMove(eval);
+          console.log(eval);
+          currentGame.imageInsert("#o", "#" + computerMove);
+          currentGame.valueVector[computerMove] = 2;
+        }
+      } else if (currentGame.playerState === 0) {
+        currentGame.imageInsert("#x", $(this));
+        currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
+        currentGame.stateSwitch();
+      } else {
+        currentGame.imageInsert("#o", $(this));
+        currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
+        currentGame.stateSwitch();
+      }
+      if (currentGame.checkOver() === true){
+        currentGame.cleanUp();
+        $("#game-over-text").text(currentGame.winner);
+        currentGame.gameState = false;
+        $("#game-over").show();
+        $("#player-1-name").text(currentGame.playerArray[0].playerName);
+        $("#player-1-wins").text(currentGame.playerArray[0].winsTotal);
+        $("#player-2-name").text(currentGame.playerArray[1].playerName);
+        $("#player-2-wins").text(currentGame.playerArray[1].winsTotal);
+      }
+    }
+  })
 
 })
 
