@@ -117,10 +117,10 @@ Game.prototype.checkOver = function () {
   // If the game is tied, sets the winner to false (to use in ternary)
   if (this.checkWin() === true) {
     this.winner = this.currentPlayer;
-    this.gameState = false;
+    return true;
   } else if (this.checkComplete() === true) {
     this.winner = false;
-    this.gameState = false;
+    return true;
   }
 };
 
@@ -232,6 +232,21 @@ Player.prototype.computerMove = function() {
   return moveChoice;
 }
 
+Game.prototype.practiceMove = function() {
+  this.valueVector[this.computerMove()] = this.currentPlayer.playerId;
+}
+
+Game.prototype.practiceGame = function() {
+  while (currentGame.gameState) {
+    this.practiceMove();
+    
+  }
+}
+
+Game.prototype.trainingMontage = function(trainingGames) {
+
+}
+
 
 ////////////////////////FRONT END///////////////////////////////////
 
@@ -283,8 +298,6 @@ $(document).ready(function() {
     }
   })
 
-
-
 // Icon selector click functions
   $(".player-1-image").click(function() {
     $(this).siblings().removeClass("highlight");
@@ -308,8 +321,10 @@ $(document).ready(function() {
       // Mark the vector position as occupied in the valueVector
       currentGame.valueVector[vectorIndex] = currentGame.currentPlayer.playerId;
       // Check to see if the game is over
-      currentGame.checkOver();
+      console.log("right before checkover");
+      currentGame.gameState = !(currentGame.checkOver());
       if (currentGame.gameState && humanPlayers === 1) {
+        console.log("at computer turn");
         // Computer move
         currentGame.nextPlayer();
         // Remove bloat from similarArrays
@@ -320,7 +335,7 @@ $(document).ready(function() {
         $("#" + computerChoice).append($(computerSymbolString).clone());
         currentGame.valueVector[computerChoice] = currentGame.currentPlayer.playerId;
         // Check again to see if the game is over
-        currentGame.checkOver();
+        currentGame.gameState = !(currentGame.checkOver());
       }
       if (currentGame.gameState === false) {
         // Clean up, show the game over screen

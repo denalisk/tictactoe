@@ -47,6 +47,10 @@ div#gameboard-content {
   max-height: 200px;
 }
 
+.entire-game {
+
+}
+
 .highlight {
   border: 2px solid red;
 }
@@ -97,7 +101,7 @@ div.players-landing-page-container {
   border-radius: 5%;
   position: relative;
   left: 20%;
-  width: 55%;
+  width: 60%;
   background: #bac9e2;
   padding: 5%;
   margin-bottom: 50px;
@@ -117,7 +121,7 @@ div.players-landing-page-container {
   width: 50%;
   min-width: 200px;
   top: 20%;
-  margin: 20% auto;
+  margin: 10vh auto;
   border-radius: 5%;
 }
 
