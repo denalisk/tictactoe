@@ -326,7 +326,7 @@ $(document).ready(function() {
         // Clean up, show the game over screen
         currentGame.cleanUp();
         $("#game-over-text").text(currentGame.winner ? (currentGame.winner.playerName + " is the winner!") : "It's a tie!");
-        $("#gameboard-content").hide();
+        // $("#gameboard-content").hide();
         $("#game-over").show();
         $("#player-1-name").text(player1.playerName);
         $("#player-1-wins").text(player1.winsTotal);
@@ -346,7 +346,7 @@ $(document).ready(function() {
       console.log(currentGame.gamesMemory);
       $("#game-over").hide();
       $(".entire-game").find(".position").empty();
-      $("#gameboard-content").show();
+      // $("#gameboard-content").show();
     })
 })
 

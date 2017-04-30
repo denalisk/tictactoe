@@ -32,15 +32,19 @@ div#invalid-player-name {
 
 div#gameboard-content {
   display: none;
+  width: 90%;
+  margin: 10% auto;
 }
 
 .center {
   text-align: center;
 }
 
-.col-sm-4 {
-  height: 200px;
-  width: 200px;
+.col-xs-4 {
+  height: 25vw;
+  width: 25vw;
+  max-width: 200px;
+  max-height: 200px;
 }
 
 .highlight {
@@ -100,11 +104,21 @@ div.players-landing-page-container {
 }
 
 .landing-page-container {
-
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(206, 211, 219, .5);
 }
 
 .landing-page {
-
+  text-align: center;
+  width: 50%;
+  min-width: 200px;
+  top: 20%;
+  margin: 20% auto;
+  border-radius: 5%;
 }
 
 
@@ -113,5 +127,5 @@ div.players-landing-page-container {
 }
 
 .holder {
-
+  padding: 10% 0% 10% 0;
 }
