@@ -70,19 +70,6 @@
         </div>
       </div>
 
-      <div id="game-over" class="landing-page">
-        <!-- Overlay for when the game is over -->
-        <div class="landing-page-container">
-          <div class="holder">
-            <p>Game Over!!</p>
-            <p><span id="game-over-text"></span></p>
-            <p><span id="player-1-name"></span> wins: <span id="player-1-wins"></span></p>
-            <p><span id="player-2-name"></span> wins: <span id="player-2-wins"></span></p>
-            <button type="button" name="button" class="btn btn-warning replay">Play again!</button>
-          </div>
-        </div>
-      </div>
-
       <div id="gameboard-content">
         <div class="jumbotron">
           <!-- The Gameboard -->
@@ -116,6 +103,19 @@
         </div>
       </div>
 
+<!-- Game over popup -->
+      <div id="game-over" class="landing-page-container">
+        <!-- Overlay for when the game is over -->
+        <div class="landing-page">
+          <div class="holder">
+            <p>Game Over!!</p>
+            <p><span id="game-over-text"></span></p>
+            <p><span id="player-1-name"></span> wins: <span id="player-1-wins"></span></p>
+            <p><span id="player-2-name"></span> wins: <span id="player-2-wins"></span></p>
+            <button type="button" name="button" class="btn btn-warning replay">Play again!</button>
+          </div>
+        </div>
+      </div>
 
       <div class="hidden">
         <!-- hidden holder for the player images -->
@@ -127,7 +127,7 @@
         <div id="o" class="symbol">
           <img src="img/o.png" alt="o" />
         </div>
-        <div id="robot">
+        <div id="robot" class="symbol">
           <img src="img/robot.png" alt="a robot" />
         </div>
       </div>

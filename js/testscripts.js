@@ -9,7 +9,7 @@ function Game(gamesMemory) {
   this.valueVector = [0,0,0,0,0,0,0,0,0];
   this.openPositions = [0,1,2,3,4,5,6,7,8];
   this.similarArrays = this.gamesMemory.gamesArray.slice();
-  this.gameState = false;
+  this.gameState = true;
   this.playerArray = [];
   this.currentPlayer;
   this.winner;
@@ -127,9 +127,17 @@ Game.prototype.checkOver = function () {
 Game.prototype.cleanUp = function() {
   // Called when the game is over. Saves the
   // current game as a gameMemory object in the global gamesMemory array
+  this.winner.winsTotal += 1;
+  var currentMoves = 0;
+  console.log(this.valueVector);
+  for (let i = 0; i < this.valueVector.length; i++) {
+    if (this.valueVector[i] !== 0) {
+      currentMoves += 1;
+    }
+  }
   var newGameMemory = {
     "valueVector": this.valueVector,
-    "moves": this.moves,
+    "moves": currentMoves,
     "winnerId": this.winner ? this.winner.playerId : false,
     "gameCode": parseInt(this.valueVector.join(""))
   };
@@ -154,8 +162,9 @@ Game.prototype.findSimilar = function() {
   for (var arraysIterator = 0; arraysIterator < this.similarArrays.length; arraysIterator++) {
     var same = true;
     for (var currentIndex = 0; currentIndex < this.valueVector.length; currentIndex++) {
-      if (this.valueVector[currentIndex] != 0 && gamesArray[arraysIterator].valueVector[currentIndex] != this.valueVector[currentIndex]) {
+      if (this.valueVector[currentIndex] != 0 && this.similarArrays[arraysIterator].valueVector[currentIndex] != this.valueVector[currentIndex]) {
         same = false;
+        break;
       }
     }
     if (same === false) {
@@ -268,7 +277,6 @@ $(document).ready(function() {
       $("#player2-symbol").append(player2.image);
       // Start the game
       currentGame = new Game(gamesMemory);
-      currentGame.gameState = true;
       currentGame.setup([player1, player2]);
       $(".players-landing-page").hide();
       $("#gameboard-content").show();
@@ -291,20 +299,17 @@ $(document).ready(function() {
 
   // Position click and play function
   $(".position").click(function() {
-    console.log(currentGame.valueVector);
     var currentDiv = $(this);
     var vectorIndex = parseInt(currentDiv.attr('id'));
     if (currentGame.valueVector[vectorIndex] === 0 && currentGame.gameState === true) {
-      console.log(currentGame.playerArray[0].playerName);
       // Insert the current player's symbol into the gameboard position
       var playerSymbolString = "#player" + currentGame.currentPlayer.playerId + "-symbol";
       $(currentDiv).append($(playerSymbolString).clone());
       // Mark the vector position as occupied in the valueVector
       currentGame.valueVector[vectorIndex] = currentGame.currentPlayer.playerId;
       // Check to see if the game is over
-      currentGame.gameState = !(currentGame.checkOver());
+      currentGame.checkOver();
       if (currentGame.gameState && humanPlayers === 1) {
-        console.log("Computer turn");
         // Computer move
         currentGame.nextPlayer();
         // Remove bloat from similarArrays
@@ -312,17 +317,16 @@ $(document).ready(function() {
         // choose a computer move and place it on the board
         var computerChoice = currentGame.currentPlayer.computerMove();
         var computerSymbolString = "#player" + currentGame.currentPlayer.playerId + "-symbol";
-        $("#" + currentGame.currentPlayer.playerId).append($(computerSymbolString).clone());
+        $("#" + computerChoice).append($(computerSymbolString).clone());
         currentGame.valueVector[computerChoice] = currentGame.currentPlayer.playerId;
         // Check again to see if the game is over
-        if (currentGame.checkOver()) {
-          currentGame.gameState = false;
-        }
+        currentGame.checkOver();
       }
       if (currentGame.gameState === false) {
         // Clean up, show the game over screen
         currentGame.cleanUp();
-        $("#game-over-text").text(currentGame.winner);
+        $("#game-over-text").text(currentGame.winner ? (currentGame.winner.playerName + " is the winner!") : "It's a tie!");
+        $("#gameboard-content").hide();
         $("#game-over").show();
         $("#player-1-name").text(player1.playerName);
         $("#player-1-wins").text(player1.winsTotal);
@@ -334,6 +338,16 @@ $(document).ready(function() {
       }
     }
   })
+  // Replay button function
+  $(".replay").click(function(){
+      var newGame = new Game(gamesMemory);
+      newGame.setup([player1, player2]);
+      currentGame = newGame;
+      console.log(currentGame.gamesMemory);
+      $("#game-over").hide();
+      $(".entire-game").find(".position").empty();
+      $("#gameboard-content").show();
+    })
 })
 
 
