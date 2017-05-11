@@ -267,15 +267,15 @@ var trainingMontage = function(trainingGames, globalMemory) {
   var player1 = new Player();
   var player2 = new Player();
   var practicePlayers = [player1, player2];
-  // console.log("At the start of the montage");
-  // console.log(globalMemory);
+  console.log("At the start of the montage");
+  console.log(globalMemory);
   for(let i = 0; i < trainingGames; i++) {
     var game = new Game(globalMemory);
     game.setup(practicePlayers);
     game.practiceGame();
   }
-  // console.log("the montage is over");
-  // console.log(globalMemory);
+  console.log("the montage is over");
+  console.log(globalMemory);
 }
 
 var printBoard = function(arrayToPrint) {
@@ -320,8 +320,12 @@ $(document).ready(function() {
 
 // Training montage button
   $("#montage-button").click(function() {
-    var montageCount = $("#montage-input").val();
-    trainingMontage(montageCount, globalMemory);
+    var montageCount = ($("#montage-input").val() < 10001 ? $("#montage-input").val() : 10000);
+    setTimeout(function() {
+      trainingMontage(montageCount, globalMemory);
+      $("#training-splash").hide();
+    }, 20)
+    $("#training-splash").show();
   })
 
 // Player selector click functions

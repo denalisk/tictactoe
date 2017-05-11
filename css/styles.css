@@ -16,6 +16,10 @@ body {
   display: none;
 }
 
+#training-splash {
+  display: none;
+}
+
 #name-players {
   display: none;
 }
@@ -53,6 +57,10 @@ div#gameboard-content {
 
 .highlight {
   border: 2px solid red;
+}
+
+.no-show {
+  display: none;
 }
 
 div.image-holder {
@@ -132,4 +140,21 @@ div.players-landing-page-container {
 
 .holder {
   padding: 10% 0% 10% 0;
+}
+
+/*Loading Spinner*/
+.loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    margin-top: 10px;
+    margin-left: 45%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

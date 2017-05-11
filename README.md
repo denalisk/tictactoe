@@ -19,6 +19,7 @@
 
 * AI learning currently has minimal returns after ~1000 unique games, greatly slowing the learning process
 * Currently undetermined whether "dumb" AI moves are a result of this or issues relating to move choice valuation
+* Players can click while the training screen is active
 
 #### Next Steps
 

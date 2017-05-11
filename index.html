@@ -104,7 +104,7 @@
         </div>
       </div>
 
-<!-- Game over popup -->
+      <!-- Game over popup -->
       <div id="game-over" class="landing-page-container">
         <!-- Overlay for when the game is over -->
         <div class="landing-page">
@@ -114,6 +114,17 @@
             <p><span id="player-1-name"></span> wins: <span id="player-1-wins"></span></p>
             <p><span id="player-2-name"></span> wins: <span id="player-2-wins"></span></p>
             <button type="button" name="button" class="btn btn-warning replay">Play again!</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Training Cover -->
+      <div id="training-splash" class="landing-page-container no-show">
+        <div class="landing-page">
+          <div class="holder center">
+            Training...
+            <div class="loader">
+            </div>
           </div>
         </div>
       </div>
@@ -136,7 +147,7 @@
     <div class="container">
       <div class="well">
         <h3>Let the computer play itself for a number of games!</h3>
-        <input type="number" name="montage-input" id="montage-input" class="form-control">
+        <input type="number" name="montage-input" id="montage-input" class="form-control" max="10001">
         <br>
         <button type="button" name="montage-button" id="montage-button" class="btn btn-warning">Train!</button>
       </div>
