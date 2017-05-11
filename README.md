@@ -6,7 +6,7 @@
 
 ## Description
 
-#### A basic website built so that uses can play Tic Tac Toe against each other or against the computer. The AI learns as you play against it, avoiding moves that have had negative outcomes before and favoring moves that have proven to be beneficial. The gameMemory is not persistent by design, and the AI will become "fresh" again on a page refresh. Users can "train" the AI by allowing it to play against a slightly randomized version of itself, increasing the breadth of the gameMemory. This is still a work in progress.
+#### A basic website built so that users can play Tic Tac Toe against each other or against the computer. The AI learns as you play against it, avoiding moves that have had negative outcomes before and favoring moves that have proven to be beneficial. The gameMemory is not persistent by design, and the AI will become "fresh" again on a page reload. Users can "train" the AI by allowing it to play against a slightly randomized version of itself, increasing the breadth of the gameMemory. This is still a work in progress.
 
 ## Specifications
 
@@ -38,7 +38,8 @@
 * JavaScript
 
 [github link for this project](https://github.com/denalisk/tictactoe)
-[github-pages for this project](https://denalisk.github.io/tictactoe/)
+//
+[view this project on gh-pages](https://denalisk.github.io/tictactoe/)
 
 ##### Copyright (c) 2017 Sam Kirsch.
 
