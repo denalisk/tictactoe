@@ -1,11 +1,11 @@
-function GamesMemory() {
+function GlobalMemory() {
   // This holds the memory of all the games
   this.gamesArray = [];
 }
 
-function Game(gamesMemory) {
+function Game(globalMemory) {
   // This holds the individual game
-  this.gamesMemory = gamesMemory;
+  this.gamesMemory = globalMemory;
   this.valueVector = [0,0,0,0,0,0,0,0,0];
   this.openPositions = [0,1,2,3,4,5,6,7,8];
   this.similarArrays = this.gamesMemory.gamesArray.slice();
@@ -127,7 +127,9 @@ Game.prototype.checkOver = function () {
 Game.prototype.cleanUp = function() {
   // Called when the game is over. Saves the
   // current game as a gameMemory object in the global gamesMemory array
-  this.winner.winsTotal += 1;
+  if (this.winner) {
+    this.winner.winsTotal += 1;
+  }
   var currentMoves = 0;
   console.log(this.valueVector);
   for (let i = 0; i < this.valueVector.length; i++) {
@@ -142,8 +144,8 @@ Game.prototype.cleanUp = function() {
     "gameCode": parseInt(this.valueVector.join(""))
   };
   var found = false;
-  for (let index = 0; index < this.gamesMemory.length; index++) {
-    if (this.gamesMemory[index].gameCode === newGameMemory.gameCode) {
+  for (let index = 0; index < this.gamesMemory.gamesArray.length; index++) {
+    if (this.gamesMemory.gamesArray[index].gameCode === newGameMemory.gameCode) {
       found = true;
       break;
     }
@@ -233,18 +235,34 @@ Player.prototype.computerMove = function() {
 }
 
 Game.prototype.practiceMove = function() {
-  this.valueVector[this.computerMove()] = this.currentPlayer.playerId;
+  // Makes an automatic move for the computer
+  this.valueVector[this.currentPlayer.computerMove()] = this.currentPlayer.playerId;
 }
 
 Game.prototype.practiceGame = function() {
-  while (currentGame.gameState) {
+  // Plays a game between two computer players, stores the result in the
+  // gamesMemory
+  while (this.gameState) {
     this.practiceMove();
-    
+    this.checkOver() ? this.gameState = false : this.nextPlayer();
   }
+  this.cleanUp();
 }
 
-Game.prototype.trainingMontage = function(trainingGames) {
-
+var trainingMontage = function(trainingGames, globalMemory) {
+  // Plays practice computer games a set number of times
+  var player1 = new Player();
+  var player2 = new Player();
+  var practicePlayers = [player1, player2];
+  console.log("At the start of the montage");
+  console.log(globalMemory);
+  for(let i = 0; i < trainingGames; i++) {
+    var game = new Game(globalMemory);
+    game.setup(practicePlayers);
+    game.practiceGame();
+  }
+  console.log("the montage is over");
+  console.log(globalMemory);
 }
 
 
@@ -252,13 +270,20 @@ Game.prototype.trainingMontage = function(trainingGames) {
 
 $(document).ready(function() {
 // Variables for the game
-  var gamesMemory = new GamesMemory();
+  var globalMemory = new GlobalMemory();
   var currentGame;
   var humanPlayers = 1;
   var player1 = new Player();
   var player2 = new Player();
   player1.image = $("#x");
   player2.image = $("#robot");
+
+// Training montage button
+  $("#montage-button").click(function() {
+    var montageCount = $("#montage-input").val();
+    console.log("Montage count: " + montageCount);
+    trainingMontage(montageCount, globalMemory);
+  })
 
 // Player selector click functions
   $("#one-player").click(function(){
@@ -291,7 +316,7 @@ $(document).ready(function() {
       player2.image.addClass("symbol");
       $("#player2-symbol").append(player2.image);
       // Start the game
-      currentGame = new Game(gamesMemory);
+      currentGame = new Game(globalMemory);
       currentGame.setup([player1, player2]);
       $(".players-landing-page").hide();
       $("#gameboard-content").show();
@@ -355,7 +380,7 @@ $(document).ready(function() {
   })
   // Replay button function
   $(".replay").click(function(){
-      var newGame = new Game(gamesMemory);
+      var newGame = new Game(globalMemory);
       newGame.setup([player1, player2]);
       currentGame = newGame;
       console.log(currentGame.gamesMemory);
