@@ -1,112 +1,79 @@
-var playerArray = [];
-var currentGame;
-var onePlayer = false;
-var gamesArray = [];
-var similarArrays = [];
+function GlobalMemory() {
+  // This holds the memory of all the games
+  this.gamesArray = [];
+}
 
-function Game(player1, player2, onePlayer, computerPlayer) {
+function Game(globalMemory) {
+  // This holds the individual game
+  this.gamesMemory = globalMemory;
   this.valueVector = [0,0,0,0,0,0,0,0,0];
+  this.openPositions = [0,1,2,3,4,5,6,7,8];
+  this.similarArrays = this.gamesMemory.gamesArray.slice();
   this.gameState = true;
-  this.playerState = 0;
   this.playerArray = [];
-  this.playerArray.push(player1, player2, computerPlayer);
-  this.currentPlayer = playerArray[this.playerState]
-  this.winner = "It's a tie";
+  this.currentPlayer;
+  this.winner;
   this.winnerId;
   this.computerPerfomance;
-  this.onePlayer = onePlayer;
 }
 
-function Player(playerName, identifier) {
-  this.playerName = playerName;
-  this.identifier = identifier;
-  playerArray.push(this);
+function Player() {
+  this.playerName = "";
   this.winsTotal = 0;
   this.humanPlayer = true;
+  this.playerId = 0;
+  this.game = null;
+  this.image = null;
 }
 
-Game.prototype.randomNumber = function() {
-  var computerMove = Math.floor(Math.random()*9);
-  while (this.valueVector[computerMove] != 0) {
-    computerMove = Math.floor(Math.random()*9);
-  }
-  return computerMove;
-};
+Player.prototype.giveName = function(name) {
+  // Sets the name of a player
+  this.playerName = name;
+}
 
-Game.prototype.onePlayerSetup = function() {
-  if (this.onePlayer === true) {
-    this.playerArray.splice(1,1);
-  } else {
-    this.playerArray.pop();
+Game.prototype.setup = function(playerArray) {
+  // Add players to the game
+  for (let index = 0; index < playerArray.length; index++) {
+    playerArray[index].game = this;
+    this.playerArray.push(playerArray[index]);
+    playerArray[index].playerId = this.playerArray.length;
   }
+  this.currentPlayer = this.playerArray[0];
+}
+
+Game.prototype.nextPlayer = function() {
+  this.currentPlayer = (this.currentPlayer.playerId === 1) ? this.playerArray[1] : this.playerArray[0];
 }
 
 Game.prototype.stateSwitch = function() {
-  if (this.playerState === 0) {
-    this.playerState = 1;
-  } else {
-    this.playerState = 0;
-  }
-}
-
-Game.prototype.printBoard = function(outputLocation) {
-  var topRow = [];
-  var midRow = [];
-  var bottomRow = [];
-  for (var i = 0; i < this.valueVector.length; i++) {
-    if (i < 3) {
-      topRow.push(this.valueVector[i]);
-    } else if (i < 6) {
-      midRow.push(this.valueVector[i]);
-    } else {
-      bottomRow.push(this.valueVector[i]);
-    }
-  }
-  $(outputLocation).append(topRow);
-  $(outputLocation).append("<br>");
-  $(outputLocation).append(midRow);
-  $(outputLocation).append("<br>");
-  $(outputLocation).append(bottomRow);
+  // changes the player who's turn it is
+  this.currentPlayer = this.playerArray[(0 + !(this.currentPlayer.playerId))];
 }
 
 Game.prototype.checkWin = function() {
-  var firstElement = this.valueVector[0];
-  var winIndex;
-  var winner = false;
-  var completeGame = true;
+  // Checks to see if someone has won the game, returns a simple boolean yes or no
+  var gameWon = false;
   for (var index = 0; index < 7; index += 3) {
     if (this.valueVector[index] === this.valueVector[index + 1] && this.valueVector[index] === this.valueVector[index + 2] && this.valueVector[index] != 0) {
-      winner = true;
-      winIndex = this.valueVector[index];
+      gameWon = true;
     }
   }
   for (var index = 0; index < 3; index += 1) {
     if (this.valueVector[index] === this.valueVector[index + 3] && this.valueVector[index] === this.valueVector[index + 6] && this.valueVector[index] != 0) {
-      winner = true;
-      winIndex = this.valueVector[index];
+      gameWon = true;
     }
   }
   for (var index = 2; index < 5; index += 2) {
     if (this.valueVector[4] === this.valueVector[4 + index] && this.valueVector[4] === this.valueVector[4 - index] && this.valueVector[4] != 0) {
-      winner = true;
-      winIndex = this.valueVector[index];
+      gameWon = true;
     }
   }
-  if (winner === true) {
-    this.winner = this.playerArray[winIndex-1].playerName + " " + "is the winner!";
-    this.winnerId = this.playerArray[winIndex-1].identifier;
-    if (this.onePlayer === true && this.winnerId === 2) {
-      this.computerPerfomance = 2;
-    } else {
-      this.computerPerfomance = (-2);
-    }
-  }
-  return winner;
+  return gameWon;
 }
 
 Game.prototype.checkComplete = function () {
+  // checks to see if the game is over due to a tie, returns a simple boolean yes or no
   var completeGame = true;
-
   for (var index = 0; index < 9; index++) {
     if (this.valueVector[index] === 0) {
       completeGame = false;
@@ -117,67 +84,135 @@ Game.prototype.checkComplete = function () {
 };
 
 Game.prototype.checkOver = function () {
+  // Checks if the game is over with checkWin and checkComplete
+  // If the game is won, sets the winner to the current player
+  // If the game is tied, sets the winner to false (to use in ternary)
   if (this.checkWin() === true) {
+    this.winner = this.currentPlayer;
     return true;
   } else if (this.checkComplete() === true) {
-      this.computerPerfomance = 1;
-      return true;
-  } else {
-    return this.checkComplete();
+    this.winner = false;
+    return true;
   }
 };
 
 Game.prototype.cleanUp = function() {
-  for (var index = 0; index < this.playerArray.length; index++) {
-    if (this.winnerId === this.playerArray[index].identifier) {
-      this.playerArray[index].winsTotal += 1;
+  // Called when the game is over. Saves the
+  // current game as a gameMemory object in the global gamesMemory array
+  if (this.winner) {
+    this.winner.winsTotal += 1;
+  }
+  var currentMoves = 0;
+  // console.log(this.valueVector);
+  for (let i = 0; i < this.valueVector.length; i++) {
+    if (this.valueVector[i] !== 0) {
+      currentMoves += 1;
     }
   }
-  gamesArray.push([this.valueVector, this.computerPerfomance])
-  similarArrays = [];
+  var newGameMemory = {
+    // Notes on the new gamesArray:
+    // gameObject = {
+    //   "valueVector": [1,2,1,1,1,2,0,2,0],
+    //   "moves": total_number_of_moves,
+    //   "winnerId": player1 = 1//player2 = 2 OR false if there was a tie,
+    //   "gameCode": the valueVector as an int for easy checking for duplicates
+    // }
+    "valueVector": this.valueVector,
+    "moves": currentMoves,
+    "winnerId": this.winner ? this.winner.playerId : false,
+    "gameCode": parseInt(this.valueVector.join(""))
+  };
+  var found = false;
+  for (let index = 0; index < this.gamesMemory.gamesArray.length; index++) {
+    if (this.gamesMemory.gamesArray[index].gameCode === newGameMemory.gameCode) {
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    this.gamesMemory.gamesArray.push(newGameMemory);
+  }
 }
 
-Game.prototype.imageInsert = function(imageId, targetId) {
-  $(targetId).append($(imageId).clone())
-}
+// AI FUNCTIONALITY /////////////////////////////////////////////////////////
 
-Game.prototype.findSimilar = function(arrayOfArrays) {
-  for (var arraysIterator = 0; arraysIterator < arrayOfArrays.length; arraysIterator++) {
+Game.prototype.findSimilar = function() {
+  // The similarArrays property starts each game holding all arrays in memory.
+  // This function is called each turn by the AI and removes arrays that are not
+  // similar to the current gamestate, slowly whittling down the similar states
+  for (var arraysIterator = 0; arraysIterator < this.similarArrays.length; arraysIterator++) {
     var same = true;
     for (var currentIndex = 0; currentIndex < this.valueVector.length; currentIndex++) {
-      if (this.valueVector[currentIndex] != 0 && arrayOfArrays[arraysIterator][0][currentIndex] != this.valueVector[currentIndex]) {
+      if (this.valueVector[currentIndex] != 0 && this.similarArrays[arraysIterator].valueVector[currentIndex] != this.valueVector[currentIndex]) {
         same = false;
+        break;
       }
     }
-    if (same === true) {
-      similarArrays.push(arrayOfArrays[arraysIterator])
+    if (same === false) {
+      this.similarArrays.splice(arraysIterator, 1);
     }
   }
 }
 
-Game.prototype.evaluateMoves = function(similarArrays) {
+Player.prototype.randomEvaluator = function() {
+  // For instances where the AI should move randomly, return a blank evaluator
+  // with illegal move blocked out
   var evaluator = [0,0,0,0,0,0,0,0,0];
-  for (var jdex = 0; jdex < this.valueVector.length; jdex++) {
-    if (this.valueVector[jdex] != 0) {
-      evaluator[jdex] = ('X');
-    }
-  }
-  for (var index = 0; index < similarArrays.length; index++) {
-    for (movesIndex = 0; movesIndex < this.valueVector.length; movesIndex++) {
-      if (similarArrays[index][0][movesIndex] === 2 && this.valueVector[movesIndex] === 0) {
-        evaluator[movesIndex] += similarArrays[index][1];
-      }
+  for (var jdex = 0; jdex < this.game.valueVector.length; jdex++) {
+    if (this.game.valueVector[jdex] != 0) {
+      evaluator[jdex] = (this.game.valueVector[jdex] === 1) ? "X" : "O";
     }
   }
   return evaluator;
 }
 
-Game.prototype.bestMove = function(evaluator) {
-  var bestPositionValue = (-10000);
+Player.prototype.evaluateMoves = function() {
+  // This function iterates through the similarArrays property of the players Game
+  // and ranks each legal move based off the outcome of each similar game
+  // Moves in winning games are highly positive, moves in losing games are worth
+  // negative, and tie games are slightly positive
+  // Value of moves are weighted based off how long it took to win or lose a game
+  // Outputs an array of values associated with each move, i.e. [3, -12, 13,...]
+  var evaluator = [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];
+  for (var jdex = 0; jdex < this.game.valueVector.length; jdex++) {
+    if (this.game.valueVector[jdex] != 0) {
+      evaluator[jdex] = (this.game.valueVector[jdex] === 1) ? "X" : "O";
+    }
+  }
+  for (let movesIndex = 0; movesIndex < this.game.valueVector.length; movesIndex++) {
+    var winsAndTies = 0;
+    var losses = 0;
+    var modifier = 0;
+    if (this.game.valueVector[movesIndex] === 0) {
+      for (let gamesIndex = 0; gamesIndex < this.game.similarArrays.length; gamesIndex++) {
+        if (this.game.similarArrays[gamesIndex].valueVector[movesIndex] === this.game.currentPlayer.playerId) {
+          var gameRecord = this.game.similarArrays[gamesIndex];
+          if (gameRecord.winnerId === this.game.currentPlayer.playerId || (gameRecord.winnerId === false)) {
+            winsAndTies++;
+            modifier += .5**(winsAndTies + 2);
+          } else {
+            losses++;
+            modifier -= .5**(losses + 2);
+          }
+        }
+      }
+      evaluator[movesIndex] += modifier;
+    }
+  }
+  // console.log("Current player is player " + this.playerId);
+  // console.log("This is the returned evaluator: ");
+  // console.log(evaluator);
+  return evaluator;
+}
+
+Player.prototype.bestMove = function(evaluator) {
+  // Iterates through the evaluator and picks the move with the highest
+  // calculated chance of not losing.
+  var bestPositionValue = "none";
   var moveChoices = []
   for (var index = 0; index < evaluator.length; index++) {
-    if (typeof(evaluator[index]) === "number") {
-      if (evaluator[index] > bestPositionValue) {
+    if (evaluator[index] !== "X" && evaluator[index] !== "O") {
+      if (evaluator[index] > bestPositionValue || bestPositionValue === "none") {
         moveChoices = [];
         moveChoices.push(index);
         bestPositionValue = evaluator[index];
@@ -187,105 +222,238 @@ Game.prototype.bestMove = function(evaluator) {
     }
   }
   var bestMove = Math.floor(Math.random() * moveChoices.length);
+  // console.log("The evaluator was :");
+  // printBoard(evaluator);
+  // console.log("Player chose move position: " + moveChoices[bestMove]);
   return moveChoices[bestMove];
 }
 
-$(document).ready(function() {
-  var player1Image = $("#x");
-  var player2Image = $("#robot");
+Player.prototype.computerMove = function() {
+  //Return a move for the computer
+  var evaluator = this.evaluateMoves();
+  var moveChoice = this.bestMove(evaluator);
+  return moveChoice;
+}
 
+Player.prototype.practiceComputerMove = function() {
+  var evaluator;
+  if (this.playerId === 1) {
+    evaluator = (randomNumber(2) !== 1) ? this.evaluateMoves() : this.randomEvaluator();
+  } else {
+    evaluator = (randomNumber(5) !== 1) ? this.evaluateMoves() : this.randomEvaluator();
+  }
+  var moveChoice = this.bestMove(evaluator);
+  return moveChoice;
+}
+
+Game.prototype.practiceMove = function() {
+  // Makes an automatic move for the computer
+  this.valueVector[this.currentPlayer.practiceComputerMove()] = this.currentPlayer.playerId;
+}
+
+Game.prototype.practiceGame = function() {
+  // Plays a game between two computer players, stores the result in the
+  // gamesMemory
+  while (this.gameState) {
+    this.findSimilar();
+    this.practiceMove();
+    this.checkOver() ? this.gameState = false : this.nextPlayer();
+  }
+  this.cleanUp();
+}
+
+var trainingMontage = function(trainingGames, globalMemory) {
+  // Plays practice computer games a set number of times
+  var player1 = new Player();
+  var player2 = new Player();
+  var practicePlayers = [player1, player2];
+  // console.log("At the start of the montage");
+  // console.log(globalMemory);
+  for(let i = 0; i < trainingGames; i++) {
+    var game = new Game(globalMemory);
+    game.setup(practicePlayers);
+    game.practiceGame();
+  }
+  // console.log("the montage is over");
+  // console.log(globalMemory);
+}
+
+var printBoard = function(arrayToPrint) {
+  // This is a testing function to print out a 3x3 board console log style
+  var topRow = [];
+  var midRow = [];
+  var bottomRow = [];
+  for (var i = 0; i < arrayToPrint.length; i++) {
+    if (i < 3) {
+      topRow.push(arrayToPrint[i]);
+    } else if (i < 6) {
+      midRow.push(arrayToPrint[i]);
+    } else {
+      bottomRow.push(arrayToPrint[i]);
+    }
+  }
+  console.log(topRow + "\n" + midRow + "\n" + bottomRow);
+  // $(outputLocation).append(topRow);
+  // $(outputLocation).append("<br>");
+  // $(outputLocation).append(midRow);
+  // $(outputLocation).append("<br>");
+  // $(outputLocation).append(bottomRow);
+}
+
+var randomNumber = function(range) {
+  // Utility function to pick a random number
+  var choice = Math.floor(Math.random()*range);
+  return choice;
+};
+
+////////////////////////FRONT END///////////////////////////////////
+
+$(document).ready(function() {
+// Variables for the game
+  var globalMemory = new GlobalMemory();
+  var currentGame;
+  var humanPlayers = 1;
+  var player1 = new Player();
+  var player2 = new Player();
+  player1.image = $("#x");
+  player2.image = $("#robot");
+
+// Training montage button
+  $("#montage-button").click(function() {
+    var montageCount = $("#montage-input").val();
+    trainingMontage(montageCount, globalMemory);
+  })
+
+// Player selector click functions
+  $("#one-player").click(function(){
+    humanPlayers = 1;
+    player2.image = $("#robot");
+    $("#player2-human").hide();
+    $("#player2-computer").show();
+  })
+  $("#two-players").click(function(){
+    humanPlayers = 2;
+    player2.image = $("#o");
+    $("#player2-computer").hide();
+    $("#player2-human").show();
+  })
+
+// Start game click function
+  $("#start-game").click(function() {
+    player1.playerName = $("#player-1").val();
+    player2.playerName = (humanPlayers === 2) ? $("#player-2").val() : "Computer";
+    if (player1.playerName === "" || player2.playerName === "") {
+      $("#invalid-player-name").show();
+    } else {
+      // Assign player images
+      player1.image = player1.image.clone()
+      player1.image.removeClass("symbol-pic highlight");
+      player1.image.addClass("symbol");
+      $("#player1-symbol").append(player1.image);
+      player2.image = player2.image.clone()
+      player2.image.removeClass("symbol-pic highlight");
+      player2.image.addClass("symbol");
+      $("#player2-symbol").append(player2.image);
+      // Start the game
+      currentGame = new Game(globalMemory);
+      currentGame.setup([player1, player2]);
+      $(".players-landing-page").hide();
+      $("#gameboard-content").show();
+    }
+  })
+
+// Icon selector click functions
   $(".player-1-image").click(function() {
     $(this).siblings().removeClass("highlight");
     $(this).addClass("highlight");
-    player1Image = $(this);
+    player1.image = $(this);
   })
   $(".player-2-image").click(function() {
     $(this).siblings().removeClass("highlight");
     $(this).addClass("highlight");
-    player2Image = $(this);
+    player2.image = $(this);
   })
 
-  $(".player-numbers").click(function() {
-    var playerChoice = $(this).attr('id');
-    $(".players-landing-page").hide();
-    $("#name-players").show();
-    if (playerChoice === "one-player") {
-      $(".player2-hidden").hide();
-      onePlayer = true;
+  // Position click and play function
+  $(".position").click(function() {
+    var currentDiv = $(this);
+    var vectorIndex = parseInt(currentDiv.attr('id'));
+    if (currentGame.valueVector[vectorIndex] === 0 && currentGame.gameState === true) {
+      // Insert the current player's symbol into the gameboard position
+      var playerSymbolString = "#player" + currentGame.currentPlayer.playerId + "-symbol";
+      $(currentDiv).append($(playerSymbolString).clone());
+      // Mark the vector position as occupied in the valueVector
+      currentGame.valueVector[vectorIndex] = currentGame.currentPlayer.playerId;
+      // Check to see if the game is over
+      // console.log("right before checkover");
+      currentGame.gameState = !(currentGame.checkOver());
+      if (currentGame.gameState && humanPlayers === 1) {
+        // console.log("at computer turn");
+        // Computer move
+        currentGame.nextPlayer();
+        // Remove bloat from similarArrays
+        currentGame.findSimilar();
+        // choose a computer move and place it on the board
+        var computerChoice = currentGame.currentPlayer.computerMove();
+        var computerSymbolString = "#player" + currentGame.currentPlayer.playerId + "-symbol";
+        $("#" + computerChoice).append($(computerSymbolString).clone());
+        currentGame.valueVector[computerChoice] = currentGame.currentPlayer.playerId;
+        // Check again to see if the game is over
+        currentGame.gameState = !(currentGame.checkOver());
+      }
+      if (currentGame.gameState === false) {
+        // Clean up, show the game over screen
+        currentGame.cleanUp();
+        $("#game-over-text").text(currentGame.winner ? (currentGame.winner.playerName + " is the winner!") : "It's a tie!");
+        $("#game-over").show();
+        $("#player-1-name").text(player1.playerName);
+        $("#player-1-wins").text(player1.winsTotal);
+        $("#player-2-name").text(player2.playerName);
+        $("#player-2-wins").text(player2.winsTotal);
+      } else {
+        // next players turn
+        currentGame.nextPlayer();
+      }
     }
   })
-
-  $("#get-names").submit(function(event) {
-    event.preventDefault();
-
-    $("#x").empty();
-    player1Image = player1Image.clone()
-    player1Image.removeClass("symbol-pic highlight");
-    player1Image.addClass("symbol");
-    $("#x").append(player1Image);
-
-    $("#o").empty();
-    player2Image = player2Image.clone()
-    player2Image.removeClass("symbol-pic highlight");
-    player2Image.addClass("symbol");
-    $("#o").append(player2Image);
-
-    $(".entire-game").show();
-    $(".landing-page").hide();
-    var player1 = new Player($("#player-1").val(), 1);
-    var player2 = new Player($("#player-2").val(), 2);
-    var computerPlayer = new Player("Computer", 2);
-    computerPlayer.humanPlayer = false;
-    var game1 = new Game(player1, player2, onePlayer, computerPlayer);
-    game1.onePlayerSetup();
-    currentGame = game1;
-
-    $(".position").click(function() {
-      similarArrays = [];
-
-      var currentDiv = $(this);
-      var vectorIndex = parseInt(currentDiv.attr('id'));
-      if (currentGame.valueVector[vectorIndex] === 0 && currentGame.gameState === true) {
-        if (currentGame.playerState === 0 && currentGame.onePlayer === true) {
-          currentGame.imageInsert("#x", $(this));
-          currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
-          if (currentGame.checkOver() === false) {
-            currentGame.findSimilar(gamesArray);
-            var eval = currentGame.evaluateMoves(similarArrays);
-            var computerMove = currentGame.bestMove(eval);
-            console.log(eval);
-            currentGame.imageInsert("#o", "#" + computerMove);
-            currentGame.valueVector[computerMove] = 2;
-          }
-        } else if (currentGame.playerState === 0) {
-          currentGame.imageInsert("#x", $(this));
-          currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
-          currentGame.stateSwitch();
-        } else {
-          currentGame.imageInsert("#o", $(this));
-          currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
-          currentGame.stateSwitch();
-        }
-        if (currentGame.checkOver() === true){
-          currentGame.cleanUp();
-          $("#game-over-text").text(currentGame.winner);
-          currentGame.gameState = false;
-          $("#game-over").show();
-          $("#player-1-name").text(currentGame.playerArray[0].playerName);
-          $("#player-1-wins").text(currentGame.playerArray[0].winsTotal);
-          $("#player-2-name").text(currentGame.playerArray[1].playerName);
-          $("#player-2-wins").text(currentGame.playerArray[1].winsTotal);
-        }
-      }
-    })
-
-    $(".replay").click(function(){
-      var newGame = new Game(player1, player2, onePlayer, computerPlayer);
-      newGame.onePlayerSetup();
+  // Replay button function
+  $(".replay").click(function(){
+      var newGame = new Game(globalMemory);
+      newGame.setup([player1, player2]);
       currentGame = newGame;
+      // console.log(currentGame.gamesMemory);
       $("#game-over").hide();
       $(".entire-game").find(".position").empty();
     })
-  })
-
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// END //////////////////////////////////////////////////////////////////

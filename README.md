@@ -6,7 +6,7 @@
 
 ## Description
 
-#### A basic website built so that uses can play Tic Tac Toe against each other or against the computer. The AI learns as you play against it, avoiding moves that have had negative outcomes before and favoring moves that have proven to be beneficial. The gameMemory is not persistent by design, and the AI will become "fresh" again on a page refresh.
+#### A basic website built so that uses can play Tic Tac Toe against each other or against the computer. The AI learns as you play against it, avoiding moves that have had negative outcomes before and favoring moves that have proven to be beneficial. The gameMemory is not persistent by design, and the AI will become "fresh" again on a page refresh. Users can "train" the AI by allowing it to play against a slightly randomized version of itself, increasing the breadth of the gameMemory. This is still a work in progress.
 
 ## Specifications
 
@@ -15,9 +15,16 @@
 * The game ends when one player has 3 in a row or the board is filled
 * Users can choose to play again
 
-#### Stretch Goals
+#### Known Issues
 
-* Add a button to automatically run computer games to up the difficulty, effectively increasing the AI's "knowledge"
+* AI learning currently has minimal returns after ~1000 unique games, greatly slowing the learning process
+* Currently undetermined whether "dumb" AI moves are a result of this or issues relating to move choice valuation
+
+#### Next Steps
+
+* Refactor the AI learning process to weight moves that win/lose fast vs. slow
+* Identify method to speed up learning process
+* Generic "make the AI smarter"
 
 ## Setup
 

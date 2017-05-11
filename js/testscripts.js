@@ -132,6 +132,13 @@ Game.prototype.cleanUp = function() {
     }
   }
   var newGameMemory = {
+    // Notes on the new gamesArray:
+    // gameObject = {
+    //   "valueVector": [1,2,1,1,1,2,0,2,0],
+    //   "moves": total_number_of_moves,
+    //   "winnerId": player1 = 1//player2 = 2 OR false if there was a tie,
+    //   "gameCode": the valueVector as an int for easy checking for duplicates
+    // }
     "valueVector": this.valueVector,
     "moves": currentMoves,
     "winnerId": this.winner ? this.winner.playerId : false,
@@ -170,6 +177,8 @@ Game.prototype.findSimilar = function() {
 }
 
 Player.prototype.randomEvaluator = function() {
+  // For instances where the AI should move randomly, return a blank evaluator
+  // with illegal move blocked out
   var evaluator = [0,0,0,0,0,0,0,0,0];
   for (var jdex = 0; jdex < this.game.valueVector.length; jdex++) {
     if (this.game.valueVector[jdex] != 0) {
@@ -186,19 +195,30 @@ Player.prototype.evaluateMoves = function() {
   // negative, and tie games are slightly positive
   // Value of moves are weighted based off how long it took to win or lose a game
   // Outputs an array of values associated with each move, i.e. [3, -12, 13,...]
-  var evaluator = [0,0,0,0,0,0,0,0,0];
+  var evaluator = [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];
   for (var jdex = 0; jdex < this.game.valueVector.length; jdex++) {
     if (this.game.valueVector[jdex] != 0) {
       evaluator[jdex] = (this.game.valueVector[jdex] === 1) ? "X" : "O";
     }
   }
-  for (var index = 0; index < this.game.similarArrays.length; index++) {
-    for (movesIndex = 0; movesIndex < this.game.valueVector.length; movesIndex++) {
-      if (this.game.valueVector[movesIndex] === 0 && this.game.similarArrays[index].valueVector[movesIndex] === this.game.currentPlayer.playerId) {
-        var gameRecord = this.game.similarArrays[index];
-        var modifier = (gameRecord.winnerId === this.game.currentPlayer.playerId || (gameRecord.winnerId === false)) ? 1 : -1;
-        evaluator[movesIndex] += modifier*(2**(9-gameRecord.moves));
+  for (let movesIndex = 0; movesIndex < this.game.valueVector.length; movesIndex++) {
+    var winsAndTies = 0;
+    var losses = 0;
+    var modifier = 0;
+    if (this.game.valueVector[movesIndex] === 0) {
+      for (let gamesIndex = 0; gamesIndex < this.game.similarArrays.length; gamesIndex++) {
+        if (this.game.similarArrays[gamesIndex].valueVector[movesIndex] === this.game.currentPlayer.playerId) {
+          var gameRecord = this.game.similarArrays[gamesIndex];
+          if (gameRecord.winnerId === this.game.currentPlayer.playerId || (gameRecord.winnerId === false)) {
+            winsAndTies++;
+            modifier += .5**(winsAndTies + 2);
+          } else {
+            losses++;
+            modifier -= .5**(losses + 2);
+          }
+        }
       }
+      evaluator[movesIndex] += modifier;
     }
   }
   // console.log("Current player is player " + this.playerId);
@@ -207,16 +227,9 @@ Player.prototype.evaluateMoves = function() {
   return evaluator;
 }
 
-// // Notes on the new gamesArray:
-// gameObject = {
-//   "valueVector": [9,9,9,9,9,9,9,9,9],
-//   "moves": total_number_of_moves,
-//   "winnerId": player1 = 1//player2 = 2,
-//   "pointValue": f(performance = 1 if this player won // -1 if they lost, total_number_of_moves = m)
-//   // pointValue = c*(2**(9-m))
-// }
-
 Player.prototype.bestMove = function(evaluator) {
+  // Iterates through the evaluator and picks the move with the highest
+  // calculated chance of not losing.
   var bestPositionValue = "none";
   var moveChoices = []
   for (var index = 0; index < evaluator.length; index++) {
@@ -232,22 +245,32 @@ Player.prototype.bestMove = function(evaluator) {
   }
   var bestMove = Math.floor(Math.random() * moveChoices.length);
   // console.log("The evaluator was :");
-  printBoard(evaluator);
+  // printBoard(evaluator);
   // console.log("Player chose move position: " + moveChoices[bestMove]);
   return moveChoices[bestMove];
 }
 
 Player.prototype.computerMove = function() {
   //Return a move for the computer
-  // var evaluator = this.randomEvaluator();
-  var evaluator = (this.playerId === 2) ? this.evaluateMoves() : this.randomEvaluator();
+  var evaluator = this.evaluateMoves();
+  var moveChoice = this.bestMove(evaluator);
+  return moveChoice;
+}
+
+Player.prototype.practiceComputerMove = function() {
+  var evaluator;
+  if (this.playerId === 1) {
+    evaluator = (randomNumber(2) !== 1) ? this.evaluateMoves() : this.randomEvaluator();
+  } else {
+    evaluator = (randomNumber(5) !== 1) ? this.evaluateMoves() : this.randomEvaluator();
+  }
   var moveChoice = this.bestMove(evaluator);
   return moveChoice;
 }
 
 Game.prototype.practiceMove = function() {
   // Makes an automatic move for the computer
-  this.valueVector[this.currentPlayer.computerMove()] = this.currentPlayer.playerId;
+  this.valueVector[this.currentPlayer.practiceComputerMove()] = this.currentPlayer.playerId;
 }
 
 Game.prototype.practiceGame = function() {
@@ -298,6 +321,11 @@ var printBoard = function(arrayToPrint) {
   // $(outputLocation).append("<br>");
   // $(outputLocation).append(bottomRow);
 }
+
+var randomNumber = function(range) {
+  var choice = Math.floor(Math.random()*range);
+  return choice;
+};
 
 ////////////////////////FRONT END///////////////////////////////////
 
