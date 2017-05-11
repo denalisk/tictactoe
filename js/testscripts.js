@@ -45,29 +45,23 @@ Game.prototype.nextPlayer = function() {
   this.currentPlayer = (this.currentPlayer.playerId === 1) ? this.playerArray[1] : this.playerArray[0];
 }
 
-Game.prototype.randomNumber = function() {
-  // This function chooses a random legal move
-  var choice = Math.floor(Math.random()*this.openPositions.length);
-  return this.openPositions[choice];
-};
-
 Game.prototype.stateSwitch = function() {
   // changes the player who's turn it is
   this.currentPlayer = this.playerArray[(0 + !(this.currentPlayer.playerId))];
 }
 
-Game.prototype.printBoard = function(outputLocation) {
+var printBoard = function(arrayToPrint) {
   // This is a testing function to print out the board console log style
   var topRow = [];
   var midRow = [];
   var bottomRow = [];
-  for (var i = 0; i < this.valueVector.length; i++) {
+  for (var i = 0; i < arrayToPrint.length; i++) {
     if (i < 3) {
-      topRow.push(this.valueVector[i]);
+      topRow.push(arrayToPrint[i]);
     } else if (i < 6) {
-      midRow.push(this.valueVector[i]);
+      midRow.push(arrayToPrint[i]);
     } else {
-      bottomRow.push(this.valueVector[i]);
+      bottomRow.push(arrayToPrint[i]);
     }
   }
   console.log(topRow + "\n" + midRow + "\n" + bottomRow);
@@ -131,7 +125,7 @@ Game.prototype.cleanUp = function() {
     this.winner.winsTotal += 1;
   }
   var currentMoves = 0;
-  console.log(this.valueVector);
+  // console.log(this.valueVector);
   for (let i = 0; i < this.valueVector.length; i++) {
     if (this.valueVector[i] !== 0) {
       currentMoves += 1;
@@ -175,6 +169,16 @@ Game.prototype.findSimilar = function() {
   }
 }
 
+Player.prototype.randomEvaluator = function() {
+  var evaluator = [0,0,0,0,0,0,0,0,0];
+  for (var jdex = 0; jdex < this.game.valueVector.length; jdex++) {
+    if (this.game.valueVector[jdex] != 0) {
+      evaluator[jdex] = (this.game.valueVector[jdex] === 1) ? "X" : "O";
+    }
+  }
+  return evaluator;
+}
+
 Player.prototype.evaluateMoves = function() {
   // This function iterates through the similarArrays property of the players Game
   // and ranks each legal move based off the outcome of each similar game
@@ -185,7 +189,7 @@ Player.prototype.evaluateMoves = function() {
   var evaluator = [0,0,0,0,0,0,0,0,0];
   for (var jdex = 0; jdex < this.game.valueVector.length; jdex++) {
     if (this.game.valueVector[jdex] != 0) {
-      evaluator[jdex] = ('ILLEGAL');
+      evaluator[jdex] = (this.game.valueVector[jdex] === 1) ? "X" : "O";
     }
   }
   for (var index = 0; index < this.game.similarArrays.length; index++) {
@@ -197,6 +201,9 @@ Player.prototype.evaluateMoves = function() {
       }
     }
   }
+  // console.log("Current player is player " + this.playerId);
+  // console.log("This is the returned evaluator: ");
+  // console.log(evaluator);
   return evaluator;
 }
 
@@ -213,7 +220,7 @@ Player.prototype.bestMove = function(evaluator) {
   var bestPositionValue = "none";
   var moveChoices = []
   for (var index = 0; index < evaluator.length; index++) {
-    if (evaluator[index] !== "ILLEGAL") {
+    if (evaluator[index] !== "X" && evaluator[index] !== "O") {
       if (evaluator[index] > bestPositionValue || bestPositionValue === "none") {
         moveChoices = [];
         moveChoices.push(index);
@@ -224,12 +231,16 @@ Player.prototype.bestMove = function(evaluator) {
     }
   }
   var bestMove = Math.floor(Math.random() * moveChoices.length);
+  // console.log("The evaluator was :");
+  printBoard(evaluator);
+  // console.log("Player chose move position: " + moveChoices[bestMove]);
   return moveChoices[bestMove];
 }
 
 Player.prototype.computerMove = function() {
   //Return a move for the computer
-  var evaluator = this.evaluateMoves();
+  // var evaluator = this.randomEvaluator();
+  var evaluator = (this.playerId === 2) ? this.evaluateMoves() : this.randomEvaluator();
   var moveChoice = this.bestMove(evaluator);
   return moveChoice;
 }
@@ -243,6 +254,7 @@ Game.prototype.practiceGame = function() {
   // Plays a game between two computer players, stores the result in the
   // gamesMemory
   while (this.gameState) {
+    this.findSimilar();
     this.practiceMove();
     this.checkOver() ? this.gameState = false : this.nextPlayer();
   }
@@ -265,6 +277,27 @@ var trainingMontage = function(trainingGames, globalMemory) {
   console.log(globalMemory);
 }
 
+var printBoard = function(arrayToPrint) {
+  // This is a testing function to print out a 3x3 board console log style
+  var topRow = [];
+  var midRow = [];
+  var bottomRow = [];
+  for (var i = 0; i < arrayToPrint.length; i++) {
+    if (i < 3) {
+      topRow.push(arrayToPrint[i]);
+    } else if (i < 6) {
+      midRow.push(arrayToPrint[i]);
+    } else {
+      bottomRow.push(arrayToPrint[i]);
+    }
+  }
+  console.log(topRow + "\n" + midRow + "\n" + bottomRow);
+  // $(outputLocation).append(topRow);
+  // $(outputLocation).append("<br>");
+  // $(outputLocation).append(midRow);
+  // $(outputLocation).append("<br>");
+  // $(outputLocation).append(bottomRow);
+}
 
 ////////////////////////FRONT END///////////////////////////////////
 
@@ -281,7 +314,6 @@ $(document).ready(function() {
 // Training montage button
   $("#montage-button").click(function() {
     var montageCount = $("#montage-input").val();
-    console.log("Montage count: " + montageCount);
     trainingMontage(montageCount, globalMemory);
   })
 
