@@ -2,7 +2,7 @@
 
 #### _Tic Tac Toe_, 04.07.2017
 
-### By _Sam Kirsch_, rebuilt from a initial collaboration with Nicole Sanders
+### By _Sam Kirsch_, rebuilt from an initial collaboration with Nicole Sanders
 
 ## Description
 
