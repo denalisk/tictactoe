@@ -189,10 +189,12 @@ Player.prototype.evaluateMoves = function() {
           var gameRecord = this.game.similarArrays[gamesIndex];
           if (gameRecord.winnerId === this.game.currentPlayer.playerId || (gameRecord.winnerId === false)) {
             winsAndTies++;
-            modifier += .5**(winsAndTies + 2);
+            modifier += .5 * (9 - gameRecord.moves);
+            // modifier += .5**(winsAndTies + 2);
           } else {
             losses++;
-            modifier -= .5**(losses + 2);
+            modifier -= .5 * (9 - gameRecord.moves);
+            // modifier -= .5**(losses + 2);
           }
         }
       }
@@ -200,8 +202,10 @@ Player.prototype.evaluateMoves = function() {
     }
   }
   // console.log("Current player is player " + this.playerId);
-  // console.log("This is the returned evaluator: ");
-  // console.log(evaluator);
+  if (this.game.playerArray[0].humanPlayer === true) {
+    console.log("This is the returned evaluator: ");
+    printBoard(evaluator);
+  }
   return evaluator;
 }
 
@@ -266,6 +270,7 @@ var trainingMontage = function(trainingGames, globalMemory) {
   // Plays practice computer games a set number of times
   var player1 = new Player();
   var player2 = new Player();
+  player1.humanPlayer = player2.humanPlayer = false;
   var practicePlayers = [player1, player2];
   console.log("At the start of the montage");
   console.log(globalMemory);
@@ -293,11 +298,6 @@ var printBoard = function(arrayToPrint) {
     }
   }
   console.log(topRow + "\n" + midRow + "\n" + bottomRow);
-  // $(outputLocation).append(topRow);
-  // $(outputLocation).append("<br>");
-  // $(outputLocation).append(midRow);
-  // $(outputLocation).append("<br>");
-  // $(outputLocation).append(bottomRow);
 }
 
 var randomNumber = function(range) {
@@ -389,10 +389,8 @@ $(document).ready(function() {
       // Mark the vector position as occupied in the valueVector
       currentGame.valueVector[vectorIndex] = currentGame.currentPlayer.playerId;
       // Check to see if the game is over
-      // console.log("right before checkover");
       currentGame.gameState = !(currentGame.checkOver());
       if (currentGame.gameState && humanPlayers === 1) {
-        // console.log("at computer turn");
         // Computer move
         currentGame.nextPlayer();
         // Remove bloat from similarArrays
@@ -408,6 +406,7 @@ $(document).ready(function() {
       if (currentGame.gameState === false) {
         // Clean up, show the game over screen
         currentGame.cleanUp();
+        console.log(globalMemory);
         $("#game-over-text").text(currentGame.winner ? (currentGame.winner.playerName + " is the winner!") : "It's a tie!");
         $("#game-over").show();
         $("#player-1-name").text(player1.playerName);
@@ -428,12 +427,13 @@ $(document).ready(function() {
       // console.log(currentGame.gamesMemory);
       $("#game-over").hide();
       $(".entire-game").find(".position").empty();
-    })
+  })
+
+  $("#debug-similar").click(function() {
+    console.log("There are currently " + currentGame.similarArrays.length + " arrays in the similar array");
+    console.log(currentGame.similarArrays);
+  })
 })
-
-
-
-
 
 
 

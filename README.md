@@ -18,14 +18,13 @@
 #### Known Issues
 
 * AI learning currently has minimal returns after ~1000 unique games, greatly slowing the learning process
-* Currently undetermined whether "dumb" AI moves are a result of this or issues relating to move choice valuation
-* Players can click while the training screen is active
+* Training method relies on the computer playing a largely randomized opponent, and the current AI evaluation process does not learn much from a non-rational opponent (AI plays patterns that lend themselves towards maximizing opportunity for victory rather than stopping obvious losses since a non-rational opponent will not always win "obviously")
 
 #### Next Steps
 
-* Refactor the AI learning process to weight moves that win/lose fast vs. slow
+* Research into building a simple neural net to create an AI model
 * Identify method to speed up learning process
-* Generic "make the AI smarter"
+* All of this: generic "make the AI smarter"
 
 ## Setup
 
